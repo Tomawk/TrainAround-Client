@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:padding="@dimen/box_inset_layout_padding"
+    tools:context=".MainActivity"
+    tools:deviceIds="wear">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:padding="@dimen/inner_frame_layout_padding"
+        app:layout_boxedEdges="all">
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#007AA6FF"
+            android:fontFamily="sans-serif"
+            android:text="Home"
+            android:textAlignment="textStart"
+            android:textColor="#3F6EB5"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/btn_1"
+            android:layout_width="159dp"
+            android:layout_height="37dp"
+            android:background="@drawable/my_btn"
+            android:text="Start Activity"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="#E1E1E1"
+            android:textSize="12sp"
+            android:translationX="10dp"
+            android:translationY="25dp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <Button
+            android:id="@+id/btn_2"
+            android:layout_width="159dp"
+            android:layout_height="37dp"
+            android:background="@drawable/my_btn"
+            android:text="Stats"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="#E1E1E1"
+            android:textSize="12sp"
+            android:translationX="10dp"
+            android:translationY="70dp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+    </FrameLayout>
+</androidx.wear.widget.BoxInsetLayout>
