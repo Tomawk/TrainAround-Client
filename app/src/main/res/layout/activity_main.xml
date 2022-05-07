@@ -55,5 +55,23 @@
             android:translationY="70dp"
             tools:ignore="TouchTargetSizeCheck" />
 
+        <TextView
+            android:id="@+id/textView_print"
+            android:layout_width="162dp"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="12sp"
+            android:translationX="10dp"
+            android:translationY="120dp" />
+
+        <TextView
+            android:id="@+id/textView_print2"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="12sp"
+            android:translationX="10dp"
+            android:translationY="140dp" />
+
     </FrameLayout>
 </androidx.wear.widget.BoxInsetLayout>

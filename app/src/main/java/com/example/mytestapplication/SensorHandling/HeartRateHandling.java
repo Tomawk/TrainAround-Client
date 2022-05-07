@@ -10,33 +10,30 @@ import com.example.mytestapplication.MainActivity;
 
 import java.util.List;
 
-public class StepCounterHandling implements SensorEventListener {
-    private static final String TAG = "StepcounterHandling";
+public class HeartRateHandling implements SensorEventListener {
+
+    private static final String TAG = "HeartBeat";
 
     private final SensorManager mSensorManager;
-    private final Sensor mStepCounter;
+    private final Sensor mHeartMonitoring;
     private final MainActivity mainActivity;
 
-    public StepCounterHandling(SensorManager sm, MainActivity ma){
+    public HeartRateHandling(SensorManager sm, MainActivity ma){
         // this.context = context;
         mainActivity = ma;
         mSensorManager = sm;
-        mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        List<Sensor> sensorList = sm.getSensorList(Sensor.TYPE_ALL);
-        for (Sensor sensor_elem : sensorList) {
-            Log.d(TAG, sensor_elem.toString());
-        }
+        mHeartMonitoring = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
     }
 
     public void onResume(){
-        Log.d(TAG, "registerSteps: on");
+        Log.d(TAG, "registerHeart: on");
         //Registers a SensorEventListener for the given sensor at the given sampling frequency.
-        mSensorManager.registerListener(this, mStepCounter, SensorManager.SENSOR_DELAY_FASTEST);
+        mSensorManager.registerListener(this, mHeartMonitoring, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     public void onPause(){
-        Log.d(TAG, "unregisterSteps: off");
-        mSensorManager.unregisterListener(this, mStepCounter);
+        Log.d(TAG, "unregisterHeart: off");
+        mSensorManager.unregisterListener(this, mHeartMonitoring);
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -44,7 +41,7 @@ public class StepCounterHandling implements SensorEventListener {
 
     public void onSensorChanged(SensorEvent event) {
         // Here we call a method in MainActivity and pass it the values from the SensorChanged event
-        mainActivity.printStepValues(event.values);
+        mainActivity.printHeartMonitoring(event.values);
 
     }
 }
