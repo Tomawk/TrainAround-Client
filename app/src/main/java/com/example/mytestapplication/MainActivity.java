@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,9 +13,14 @@ import android.widget.TextView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.mytestapplication.SensorHandling.AccelerometerHandling;
+import com.example.mytestapplication.SensorHandling.GPSHandling;
 import com.example.mytestapplication.SensorHandling.HeartRateHandling;
+import com.example.mytestapplication.SensorHandling.SensorUtility;
 import com.example.mytestapplication.SensorHandling.StepCounterHandling;
 import com.example.mytestapplication.databinding.ActivityMainBinding;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,75 +32,71 @@ public class MainActivity extends Activity{
 
     private TextView mTextView;
     private ActivityMainBinding binding;
-    //private AccelerometerHandling accelerometerHandling;
+    private FusedLocationProviderClient fusedLocationClient;
+    private GPSHandling gpsHandling;
+    private AccelerometerHandling accelerometerHandling;
     //private StepCounterHandling stepCounterHandling;
     private HeartRateHandling heartRateHandling;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    if(!checkAndRequestPermissions()) Log.d(TAG,"Not all permissions have been granted!");
-        else Log.d(TAG,"Permissions have been granted!");
+    if(!SensorUtility.checkAndRequestPermissions(this)) {
+        Log.d(TAG,"Not all permissions have been granted!");
+    } else {
+        Log.d(TAG,"Permissions have been granted!");
+    }
 
-    //accelerometerHandling = new AccelerometerHandling((SensorManager)getSystemService(SENSOR_SERVICE), this);
-    SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+    gpsHandling = new GPSHandling(this);
+
+    fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        //Permissions already Checked using previous method
+        return;
+    }
+
+    fusedLocationClient.requestLocationUpdates(gpsHandling.getLocationRequest(),gpsHandling.getLocationCallback(), Looper.getMainLooper());
+
+    //TODO: Non sono sicuro se basti un sensor manager unico o se servano piu sensor manager per ogni sensore (DA VEDERE)
+    SensorManager sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+
+    //Display all the available sensors on the current tested device, debug purpose
+    String available_sensor_list = SensorUtility.getSensorList(sensorManager);
+    Log.d("SensorUtility",available_sensor_list);
+
+    //Sensor classes instantiations
+    accelerometerHandling = new AccelerometerHandling(sensorManager, this);
     //stepCounterHandling = new StepCounterHandling(sensorManager, this);
     heartRateHandling = new HeartRateHandling(sensorManager,this);
 
-     binding = ActivityMainBinding.inflate(getLayoutInflater());
-     setContentView(binding.getRoot());
+    binding = ActivityMainBinding.inflate(getLayoutInflater());
+    setContentView(binding.getRoot());
 
-     Button button = (Button)findViewById(R.id.btn_1);
-     button.setFocusable(true);
-     button.setFocusableInTouchMode(true);
-     button.requestFocus();
+    Button button = (Button)findViewById(R.id.btn_1);
+    button.setFocusable(true);
+    button.setFocusableInTouchMode(true);
+    button.requestFocus();
 
-     Button button2 = (Button)findViewById(R.id.btn_2);
-     button2.setFocusable(true);
-     button2.setFocusableInTouchMode(true);
-     button2.requestFocus();
+    mTextView = binding.text;
 
-     mTextView = binding.text;
     }
 
     public void onResume(){
         super.onResume();
-       // accelerometerHandling.onResume();
+        accelerometerHandling.onResume();
         //stepCounterHandling.onResume();
         heartRateHandling.onResume();
     }
 
     public void onPause(){
         super.onPause();
-        //accelerometerHandling.onPause();
+        accelerometerHandling.onPause();
         //stepCounterHandling.onPause();
         heartRateHandling.onPause();
-    }
-
-    private  boolean checkAndRequestPermissions() {
-        //int wake_lock = ContextCompat.checkSelfPermission(this, Manifest.permission.WAKE_LOCK);
-        int body_sensors = ContextCompat.checkSelfPermission(this, Manifest.permission.BODY_SENSORS);
-        int activity_recognition = ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION);
-        List<String> listPermissionsNeeded = new ArrayList<>();
-/*
-        if (wake_lock != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.WAKE_LOCK);
-        }*/
-        if (body_sensors != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.BODY_SENSORS);
-        }
-        if (activity_recognition != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.ACTIVITY_RECOGNITION);
-        }
-
-        if (!listPermissionsNeeded.isEmpty())
-        {
-            ActivityCompat.requestPermissions(this,listPermissionsNeeded.toArray
-                    (new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
-            return false;
-        }
-        return true;
     }
 
     public void printAccelValues(float[] values){
@@ -102,7 +104,8 @@ public class MainActivity extends Activity{
         String y_axis = Float.toString(values[1]);
         String z_axis = Float.toString(values[2]);
         String output_str = "x_axis = " + x_axis + "; y_axis = " + y_axis + "; z_axis = " + z_axis + ";";
-        Log.d(TAG,output_str);
+        TextView textView_print = (TextView) findViewById(R.id.textView_print);
+        textView_print.setText("Accelerometer: " + output_str);
     }
 
     public void printStepValues(float[] values){
@@ -113,6 +116,13 @@ public class MainActivity extends Activity{
     public void printHeartMonitoring(float[] values){
         TextView textView_print2 = (TextView) findViewById(R.id.textView_print2);
         textView_print2.setText("Heart Rate: " + Float.toString(values[0]));
+    }
+
+    public void printLocation(double latitude,double longitude,float speed){
+        TextView textView_print = (TextView) findViewById(R.id.textView_gps);
+        textView_print.setText("Lat: " + latitude +"  " +
+                "Lon: " + longitude + "  " +
+                "Speed: " + speed);
     }
 
 }

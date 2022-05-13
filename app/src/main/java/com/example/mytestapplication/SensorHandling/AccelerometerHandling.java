@@ -27,15 +27,24 @@ public class AccelerometerHandling implements SensorEventListener {
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
 
+    /*
+    As a best practice for using sensors, it is recommended to unregister the listener
+    when the sketch's activity is paused to reduce battery usage, and then registering
+    it again when the activity resumes.
+     */
+
     public void onResume(){
-        Log.d(TAG, "registerAccel: on");
-        //Registers a SensorEventListener for the given sensor at the given sampling frequency.
-        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        if(mSensorManager != null){
+            Log.d(TAG, "registerAccel: on");
+            mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
 
     public void onPause(){
-        Log.d(TAG, "unregisterAccel: off");
-        mSensorManager.unregisterListener(this, mAccelerometer);
+        if(mSensorManager != null){
+            Log.d(TAG, "unregisterAccel: off");
+            mSensorManager.unregisterListener(this, mAccelerometer);
+        }
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
