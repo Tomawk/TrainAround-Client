@@ -1,12 +1,16 @@
 package com.example.mytestapplication.SensorHandling;
 
+import android.app.Activity;
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.example.mytestapplication.MainActivity;
+import com.example.mytestapplication.R;
 
 import java.util.List;
 
@@ -15,11 +19,10 @@ public class StepCounterHandling implements SensorEventListener {
 
     private final SensorManager mSensorManager;
     private final Sensor mStepCounter;
-    private final MainActivity mainActivity;
+    private final Context context;
 
-    public StepCounterHandling(SensorManager sm, MainActivity ma){
-        // this.context = context;
-        mainActivity = ma;
+    public StepCounterHandling(SensorManager sm, Context ctx){
+        context = ctx;
         mSensorManager = sm;
         mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         List<Sensor> sensorList = sm.getSensorList(Sensor.TYPE_ALL);
@@ -53,8 +56,11 @@ public class StepCounterHandling implements SensorEventListener {
     }
 
     public void onSensorChanged(SensorEvent event) {
-        // Here we call a method in MainActivity and pass it the values from the SensorChanged event
-        mainActivity.printStepValues(event.values);
+        printStepValues(event.values);
+    }
 
+    public void printStepValues(float[] values){
+        TextView textView_print = (TextView) ((Activity)context).findViewById(R.id.textView_print3);
+        textView_print.setText("Step Counter: " + values[0]);
     }
 }

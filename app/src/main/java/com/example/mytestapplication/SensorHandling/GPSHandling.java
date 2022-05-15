@@ -1,8 +1,12 @@
 package com.example.mytestapplication.SensorHandling;
 
+import android.app.Activity;
+import android.content.Context;
 import android.location.Location;
+import android.widget.TextView;
 
 import com.example.mytestapplication.MainActivity;
+import com.example.mytestapplication.R;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -14,13 +18,16 @@ public class GPSHandling {
     private double latitude;
     private double longitude;
     private float speed;
+    private Context context;
 
     public static final long UPDATE_INTERVAL = 5000; //in milliseconds
     public static final long FASTEST_INTERVAL = 1000;
     public static final long MAX_WAIT_TIME = 5000;
     public static final float UPDATE_AFTER_METERS = 50; //in meters
 
-    public GPSHandling (MainActivity ma){
+    public GPSHandling (Context ctx){
+
+        context = ctx;
 
         locationRequest = LocationRequest.create()
                 .setInterval(UPDATE_INTERVAL)
@@ -40,7 +47,7 @@ public class GPSHandling {
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
                         speed = location.getSpeedAccuracyMetersPerSecond ();
-                        ma.printLocation(latitude,longitude,speed);
+                        printLocation(latitude,longitude,speed);
                     }
                 }
             }
@@ -53,5 +60,12 @@ public class GPSHandling {
 
     public LocationRequest getLocationRequest() {
         return locationRequest;
+    }
+
+    public void printLocation(double latitude,double longitude,float speed){
+        TextView textView_print = (TextView) ((Activity)context).findViewById(R.id.textView_gps);
+        textView_print.setText("Lat: " + latitude +"  " +
+                "Lon: " + longitude + "  " +
+                "Speed: " + speed);
     }
 }

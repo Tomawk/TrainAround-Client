@@ -2,6 +2,11 @@ package com.example.mytestapplication;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
 import android.os.Bundle;
@@ -12,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.mytestapplication.SensorHandling.AccelerometerHandling;
 import com.example.mytestapplication.SensorHandling.GPSHandling;
@@ -19,6 +25,7 @@ import com.example.mytestapplication.SensorHandling.HeartRateHandling;
 import com.example.mytestapplication.SensorHandling.SensorUtility;
 import com.example.mytestapplication.SensorHandling.StepCounterHandling;
 import com.example.mytestapplication.databinding.ActivityMainBinding;
+import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
@@ -35,8 +42,18 @@ public class MainActivity extends Activity{
     private FusedLocationProviderClient fusedLocationClient;
     private GPSHandling gpsHandling;
     private AccelerometerHandling accelerometerHandling;
-    //private StepCounterHandling stepCounterHandling;
+    private StepCounterHandling stepCounterHandling;
     private HeartRateHandling heartRateHandling;
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            String message = intent.getStringExtra("Activity");
+            TextView textView_print = (TextView) findViewById(R.id.textView_activity);
+            textView_print.setText("Activity Recognized: " + message);
+        }
+    };
 
 
     @Override
@@ -68,9 +85,16 @@ public class MainActivity extends Activity{
     String available_sensor_list = SensorUtility.getSensorList(sensorManager);
     Log.d("SensorUtility",available_sensor_list);
 
+    Intent intent = new Intent( this, ActivityRecognizedService.class );
+    PendingIntent pendingIntent = PendingIntent.getService( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
+    ActivityRecognition.getClient(this).requestActivityUpdates(0, pendingIntent);
+
+    LocalBroadcastManager.getInstance(this).registerReceiver(
+        mMessageReceiver, new IntentFilter("ActivityRecognized"));
+
     //Sensor classes instantiations
     accelerometerHandling = new AccelerometerHandling(sensorManager, this);
-    //stepCounterHandling = new StepCounterHandling(sensorManager, this);
+    stepCounterHandling = new StepCounterHandling(sensorManager, this);
     heartRateHandling = new HeartRateHandling(sensorManager,this);
 
     binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -88,41 +112,15 @@ public class MainActivity extends Activity{
     public void onResume(){
         super.onResume();
         accelerometerHandling.onResume();
-        //stepCounterHandling.onResume();
+        stepCounterHandling.onResume();
         heartRateHandling.onResume();
     }
 
     public void onPause(){
         super.onPause();
         accelerometerHandling.onPause();
-        //stepCounterHandling.onPause();
+        stepCounterHandling.onPause();
         heartRateHandling.onPause();
-    }
-
-    public void printAccelValues(float[] values){
-        String x_axis = Float.toString(values[0]);
-        String y_axis = Float.toString(values[1]);
-        String z_axis = Float.toString(values[2]);
-        String output_str = "x_axis = " + x_axis + "; y_axis = " + y_axis + "; z_axis = " + z_axis + ";";
-        TextView textView_print = (TextView) findViewById(R.id.textView_print);
-        textView_print.setText("Accelerometer: " + output_str);
-    }
-
-    public void printStepValues(float[] values){
-        TextView textView_print = (TextView) findViewById(R.id.textView_print);
-        textView_print.setText("Step Counter: " + Float.toString(values[0]));
-    }
-
-    public void printHeartMonitoring(float[] values){
-        TextView textView_print2 = (TextView) findViewById(R.id.textView_print2);
-        textView_print2.setText("Heart Rate: " + Float.toString(values[0]));
-    }
-
-    public void printLocation(double latitude,double longitude,float speed){
-        TextView textView_print = (TextView) findViewById(R.id.textView_gps);
-        textView_print.setText("Lat: " + latitude +"  " +
-                "Lon: " + longitude + "  " +
-                "Speed: " + speed);
     }
 
 }

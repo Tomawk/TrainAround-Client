@@ -3,13 +3,17 @@
     package="com.example.mytestapplication" >
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+    <!-- Activity Recognition permissions -->
+    <!-- Required for 28 and below. -->
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+    <!-- Required for 29+. -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.BODY_SENSORS"/>
 
     <!--Location permissions -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-
+    <!-- -->
     <uses-feature android:name="android.hardware.type.watch" />
 
     <application
@@ -40,7 +44,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SensorHandling.AccelerometerHandling" />
+        <service android:name=".ActivityRecognizedService" />
     </application>
 
 </manifest>

@@ -38,35 +38,53 @@
             android:textColor="#E1E1E1"
             android:textSize="12sp"
             android:translationX="10dp"
-            android:translationY="25dp"
+            android:translationY="15dp"
             tools:ignore="TouchTargetSizeCheck" />
-
-        <TextView
-            android:id="@+id/textView_print"
-            android:layout_width="162dp"
-            android:layout_height="33dp"
-            android:text="TextView"
-            android:textSize="12sp"
-            android:translationX="10dp"
-            android:translationY="120dp" />
 
         <TextView
             android:id="@+id/textView_gps"
             android:layout_width="162dp"
-            android:layout_height="33dp"
-            android:text="TextView"
+            android:layout_height="28dp"
+            android:text="GPS Coordinated"
             android:textSize="12sp"
             android:translationX="10dp"
-            android:translationY="80dp" />
+            android:translationY="55dp" />
+
+        <TextView
+            android:id="@+id/textView_print"
+            android:layout_width="162dp"
+            android:layout_height="29dp"
+            android:text="Accelerometer"
+            android:textSize="12sp"
+            android:translationX="10dp"
+            android:translationY="85dp" />
 
         <TextView
             android:id="@+id/textView_print2"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="Heart Rate"
             android:textSize="12sp"
             android:translationX="10dp"
-            android:translationY="160dp" />
+            android:translationY="115dp" />
+
+        <TextView
+            android:id="@+id/textView_activity"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="Activity Recognized"
+            android:textSize="12sp"
+            android:translationX="10dp"
+            android:translationY="135dp" />
+
+        <TextView
+            android:id="@+id/textView_print3"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="Step Counter"
+            android:textSize="12sp"
+            android:translationX="10dp"
+            android:translationY="155dp" />
 
     </FrameLayout>
 </androidx.wear.widget.BoxInsetLayout>

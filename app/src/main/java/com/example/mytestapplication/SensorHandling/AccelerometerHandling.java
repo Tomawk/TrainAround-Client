@@ -8,8 +8,10 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.example.mytestapplication.MainActivity;
+import com.example.mytestapplication.R;
 
 
 public class AccelerometerHandling implements SensorEventListener {
@@ -18,11 +20,11 @@ public class AccelerometerHandling implements SensorEventListener {
 
     private final SensorManager mSensorManager;
     private final Sensor mAccelerometer;
-    private final MainActivity mainActivity;
+    private final Context context;
 
-    public AccelerometerHandling(SensorManager sm, MainActivity ma){
+    public AccelerometerHandling(SensorManager sm, Context ctx){
        // this.context = context;
-        mainActivity = ma;
+        context = ctx;
         mSensorManager = sm;
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
@@ -52,6 +54,15 @@ public class AccelerometerHandling implements SensorEventListener {
 
     public void onSensorChanged(SensorEvent event) {
         // Here we call a method in MainActivity and pass it the values from the SensorChanged event
-        mainActivity.printAccelValues( event.values );
+        printAccelValues( event.values );
+    }
+
+    public void printAccelValues(float[] values){
+        String x_axis = Float.toString(values[0]);
+        String y_axis = Float.toString(values[1]);
+        String z_axis = Float.toString(values[2]);
+        String output_str = "x_axis = " + x_axis + "; y_axis = " + y_axis + "; z_axis = " + z_axis + ";";
+        TextView textView_print = (TextView) ((Activity)context).findViewById(R.id.textView_print);
+        textView_print.setText("Accelerometer: " + output_str);
     }
 }

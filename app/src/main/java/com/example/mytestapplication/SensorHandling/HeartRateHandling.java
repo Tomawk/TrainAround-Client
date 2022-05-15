@@ -1,12 +1,16 @@
 package com.example.mytestapplication.SensorHandling;
 
+import android.app.Activity;
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.example.mytestapplication.MainActivity;
+import com.example.mytestapplication.R;
 
 import java.util.List;
 
@@ -16,11 +20,11 @@ public class HeartRateHandling implements SensorEventListener {
 
     private final SensorManager mSensorManager;
     private final Sensor mHeartMonitoring;
-    private final MainActivity mainActivity;
+    private final Context context;
 
-    public HeartRateHandling(SensorManager sm, MainActivity ma){
+    public HeartRateHandling(SensorManager sm, Context ctx){
         // this.context = context;
-        mainActivity = ma;
+        context = ctx;
         mSensorManager = sm;
         mHeartMonitoring = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
     }
@@ -51,7 +55,12 @@ public class HeartRateHandling implements SensorEventListener {
 
     public void onSensorChanged(SensorEvent event) {
         // Here we call a method in MainActivity and pass it the values from the SensorChanged event
-        mainActivity.printHeartMonitoring(event.values);
+        printHeartMonitoring(event.values);
 
+    }
+
+    public void printHeartMonitoring(float[] values){
+        TextView textView_print2 = (TextView) ((Activity)context).findViewById(R.id.textView_print2);;
+        textView_print2.setText("Heart Rate: " + values[0]);
     }
 }
