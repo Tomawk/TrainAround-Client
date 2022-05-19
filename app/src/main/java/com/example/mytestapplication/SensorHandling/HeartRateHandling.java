@@ -60,7 +60,7 @@ public class HeartRateHandling implements SensorEventListener {
     }
 
     public void printHeartMonitoring(float[] values){
-        TextView textView_print2 = (TextView) ((Activity)context).findViewById(R.id.textView_print2);;
+        TextView textView_print2 = (TextView) ((Activity)context).findViewById(R.id.textView_heart);;
         textView_print2.setText("Heart Rate: " + values[0]);
     }
 }

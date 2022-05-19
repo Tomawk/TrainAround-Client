@@ -62,7 +62,7 @@ public class AccelerometerHandling implements SensorEventListener {
         String y_axis = Float.toString(values[1]);
         String z_axis = Float.toString(values[2]);
         String output_str = "x_axis = " + x_axis + "; y_axis = " + y_axis + "; z_axis = " + z_axis + ";";
-        TextView textView_print = (TextView) ((Activity)context).findViewById(R.id.textView_print);
+        TextView textView_print = (TextView) ((Activity)context).findViewById(R.id.textView_accl);
         textView_print.setText("Accelerometer: " + output_str);
     }
 }

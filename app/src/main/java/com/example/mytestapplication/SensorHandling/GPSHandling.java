@@ -3,6 +3,7 @@ package com.example.mytestapplication.SensorHandling;
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.example.mytestapplication.MainActivity;
@@ -18,12 +19,13 @@ public class GPSHandling {
     private double latitude;
     private double longitude;
     private float speed;
+    private boolean hasSpeed;
     private Context context;
 
-    public static final long UPDATE_INTERVAL = 5000; //in milliseconds
-    public static final long FASTEST_INTERVAL = 1000;
-    public static final long MAX_WAIT_TIME = 5000;
-    public static final float UPDATE_AFTER_METERS = 50; //in meters
+    public static final long UPDATE_INTERVAL = 1000; //in milliseconds
+    public static final long FASTEST_INTERVAL = 500;
+    public static final long MAX_WAIT_TIME = 500;
+    // public static final float UPDATE_AFTER_METERS = 50; //in meters
 
     public GPSHandling (Context ctx){
 
@@ -32,7 +34,7 @@ public class GPSHandling {
         locationRequest = LocationRequest.create()
                 .setInterval(UPDATE_INTERVAL)
                 .setFastestInterval(FASTEST_INTERVAL)
-                .setSmallestDisplacement(UPDATE_AFTER_METERS)
+                //.setSmallestDisplacement(UPDATE_AFTER_METERS) //TODO: DEBUG ONLY
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setMaxWaitTime(MAX_WAIT_TIME);
 
@@ -46,8 +48,9 @@ public class GPSHandling {
                     if (location != null) {
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
-                        speed = location.getSpeedAccuracyMetersPerSecond ();
-                        printLocation(latitude,longitude,speed);
+                        speed = location.getSpeed();
+                        hasSpeed = location.hasSpeed();
+                        printLocation(latitude,longitude,speed,hasSpeed);
                     }
                 }
             }
@@ -62,10 +65,11 @@ public class GPSHandling {
         return locationRequest;
     }
 
-    public void printLocation(double latitude,double longitude,float speed){
+    public void printLocation(double latitude,double longitude,float speed,boolean hasSpeed){
         TextView textView_print = (TextView) ((Activity)context).findViewById(R.id.textView_gps);
         textView_print.setText("Lat: " + latitude +"  " +
                 "Lon: " + longitude + "  " +
                 "Speed: " + speed);
+        Log.e("GPSHandling","hasSpeed - " + hasSpeed);
     }
 }

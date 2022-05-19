@@ -60,7 +60,7 @@ public class StepCounterHandling implements SensorEventListener {
     }
 
     public void printStepValues(float[] values){
-        TextView textView_print = (TextView) ((Activity)context).findViewById(R.id.textView_print3);
+        TextView textView_print = (TextView) ((Activity)context).findViewById(R.id.textView_steps);
         textView_print.setText("Step Counter: " + values[0]);
     }
 }

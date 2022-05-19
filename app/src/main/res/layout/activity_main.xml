@@ -1,90 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
-    android:padding="@dimen/box_inset_layout_padding"
+    android:background="#EFEFEF"
     tools:context=".MainActivity"
-    tools:deviceIds="wear">
+    tools:deviceIds="wear">>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#000000"
-        android:padding="@dimen/inner_frame_layout_padding"
-        app:layout_boxedEdges="all">
 
-        <TextView
-            android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#007AA6FF"
-            android:fontFamily="sans-serif"
-            android:text="Home"
-            android:textAlignment="textStart"
-            android:textColor="#3F6EB5"
-            android:textSize="10sp" />
+    <Button
+        android:id="@+id/start_btn"
+        android:layout_width="128dp"
+        android:layout_height="48dp"
+        android:background="@drawable/my_btn_radius"
+        android:text="Start Activity"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.497" />
 
-        <Button
-            android:id="@+id/btn_1"
-            android:layout_width="159dp"
-            android:layout_height="37dp"
-            android:background="@drawable/my_btn"
-            android:text="Start Activity"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="#E1E1E1"
-            android:textSize="12sp"
-            android:translationX="10dp"
-            android:translationY="15dp"
-            tools:ignore="TouchTargetSizeCheck" />
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="116dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="61dp"
+        android:layout_marginBottom="23dp"
+        android:text="My Training App"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView_gps"
-            android:layout_width="162dp"
-            android:layout_height="28dp"
-            android:text="GPS Coordinated"
-            android:textSize="12sp"
-            android:translationX="10dp"
-            android:translationY="55dp" />
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="82dp"
+        android:layout_height="74dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/sss"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-            android:id="@+id/textView_print"
-            android:layout_width="162dp"
-            android:layout_height="29dp"
-            android:text="Accelerometer"
-            android:textSize="12sp"
-            android:translationX="10dp"
-            android:translationY="85dp" />
-
-        <TextView
-            android:id="@+id/textView_print2"
-            android:layout_width="160dp"
-            android:layout_height="wrap_content"
-            android:text="Heart Rate"
-            android:textSize="12sp"
-            android:translationX="10dp"
-            android:translationY="115dp" />
-
-        <TextView
-            android:id="@+id/textView_activity"
-            android:layout_width="160dp"
-            android:layout_height="wrap_content"
-            android:text="Activity Recognized"
-            android:textSize="12sp"
-            android:translationX="10dp"
-            android:translationY="135dp" />
-
-        <TextView
-            android:id="@+id/textView_print3"
-            android:layout_width="160dp"
-            android:layout_height="wrap_content"
-            android:text="Step Counter"
-            android:textSize="12sp"
-            android:translationX="10dp"
-            android:translationY="155dp" />
-
-    </FrameLayout>
-</androidx.wear.widget.BoxInsetLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
