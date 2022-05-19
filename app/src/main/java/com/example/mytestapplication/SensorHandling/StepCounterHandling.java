@@ -20,15 +20,12 @@ public class StepCounterHandling implements SensorEventListener {
     private final SensorManager mSensorManager;
     private final Sensor mStepCounter;
     private final Context context;
+    private float initialSteps = 0;
 
     public StepCounterHandling(SensorManager sm, Context ctx){
         context = ctx;
         mSensorManager = sm;
         mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        List<Sensor> sensorList = sm.getSensorList(Sensor.TYPE_ALL);
-        for (Sensor sensor_elem : sensorList) {
-            Log.d(TAG, sensor_elem.toString());
-        }
     }
 
     /*
@@ -56,11 +53,17 @@ public class StepCounterHandling implements SensorEventListener {
     }
 
     public void onSensorChanged(SensorEvent event) {
-        printStepValues(event.values);
+        if(initialSteps == 0){
+            initialSteps = event.values[0];
+            printStepValues(0);
+        } else {
+            float new_steps = event.values[0] - initialSteps;
+            printStepValues(new_steps);
+        }
     }
 
-    public void printStepValues(float[] values){
+    public void printStepValues(float new_steps){
         TextView textView_print = (TextView) ((Activity)context).findViewById(R.id.textView_steps);
-        textView_print.setText("Step Counter: " + values[0]);
+        textView_print.setText("Step Counter: " + new_steps);
     }
 }
