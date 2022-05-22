@@ -23,12 +23,11 @@
         app:layout_constraintVertical_bias="0.497" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/welcome_textview"
         android:layout_width="116dp"
         android:layout_height="0dp"
         android:layout_marginTop="61dp"
-        android:layout_marginBottom="23dp"
-        android:text="My Training App"
+        android:text="Welcome, "
         android:textAlignment="center"
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,7 +39,7 @@
         android:layout_width="82dp"
         android:layout_height="74dp"
         android:layout_marginBottom="24dp"
-        android:src="@drawable/sss"
+        android:src="@drawable/running_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"

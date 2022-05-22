@@ -51,7 +51,6 @@ public class SensorActivity extends Activity {
         setContentView(R.layout.activity_sensor);
 
         gpsHandling = new GPSHandling(this);
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
