@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:key="athleteName"
+        android:summary="Please provide your name"
+        android:title="Name"
+        android:inputType="text"
+        android:singleLine="true"
+        />
+    <EditTextPreference
+        android:key="athleteSurname"
+        android:summary="Please provide your surname"
+        android:title="Surname"
+        android:inputType="text"
+        android:singleLine="true"
+        />
+    <EditTextPreference
+        android:key="athleteAge"
+        android:summary="Please provide your age"
+        android:title="Age"
+        android:inputType="text"
+        android:singleLine="true"
+        />
+    <EditTextPreference
+        android:key="athleteWeight"
+        android:summary="Please provide your weight"
+        android:title="Weight"
+        android:inputType="text"
+        android:singleLine="true"
+        />
+    <EditTextPreference
+        android:key="athleteHeight"
+        android:summary="Please provide your height"
+        android:title="Height"
+        android:inputType="text"
+        android:singleLine="true"
+        />
+</PreferenceScreen>

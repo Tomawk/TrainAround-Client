@@ -33,33 +33,15 @@ public class NamePopUpActivity extends Activity {
                 //get the trainer name from the text input
                 EditText trainerNameInput = (EditText) findViewById(R.id.name_edit);
                 String inputData = trainerNameInput.getText().toString();
-                if (!writeToFile(inputData, getApplicationContext(), fileName)) {
-                    Toast.makeText(getApplicationContext(), "Error: unable to save settings", Toast.LENGTH_SHORT).show();
-                } else {
-                    //send back to MainActivity an intent with trainer's name attached
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("athleteName",inputData);
-                    setResult(Activity.RESULT_OK, returnIntent);
-                    finish();
+                Preferences.setAthleteName(inputData);
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("athleteName",inputData);
+                setResult(Activity.RESULT_OK, returnIntent);
+                finish();
                 }
-            }
         });
 
 
     }
-
-    private boolean writeToFile(String data, Context context, String fileName) {
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
-            outputStreamWriter.write(data);
-            outputStreamWriter.close();
-            return true;
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-            return false;
-        }
-    }
-
 
 }
