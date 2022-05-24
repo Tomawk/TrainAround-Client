@@ -6,43 +6,61 @@
     android:layout_height="match_parent"
     android:background="#EFEFEF"
     tools:context=".MainActivity"
-    tools:deviceIds="wear">>
+    tools:deviceIds="wear"><![CDATA[>
 
+
+
+
+
+
+    ]]>
 
     <Button
         android:id="@+id/start_btn"
-        android:layout_width="128dp"
-        android:layout_height="48dp"
+        android:layout_width="133dp"
+        android:layout_height="28dp"
         android:background="@drawable/my_btn_radius"
         android:text="Start Activity"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.497" />
+        app:layout_constraintVertical_bias="0.044" />
+
+    <Button
+        android:id="@+id/connect_btn"
+        android:layout_width="133dp"
+        android:layout_height="28dp"
+        android:background="@drawable/my_btn_radius"
+        android:text="Connect"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.276" />
 
     <TextView
         android:id="@+id/welcome_textview"
-        android:layout_width="116dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="61dp"
+        android:layout_width="114dp"
+        android:layout_height="19dp"
+        android:layout_marginTop="84dp"
         android:text="Welcome, "
         android:textAlignment="center"
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="82dp"
-        android:layout_height="74dp"
-        android:layout_marginBottom="24dp"
+        android:layout_width="76dp"
+        android:layout_height="67dp"
+        android:layout_marginBottom="16dp"
         android:src="@drawable/running_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
