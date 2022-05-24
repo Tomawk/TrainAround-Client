@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,6 +39,8 @@ public class GATTClientService extends Service {
 
     private Binder binder = new LocalBinder();
     public static final String TAG = "BluetoothLeService";
+
+    private static UUID ATHLETE_INFORMATION_SERVICE = UUID.fromString("a173b614-8dff-455d-83d1-37de25b9432c");
 
     /* Scanning fields */
     private BluetoothDevice serverAddress;
@@ -108,6 +111,7 @@ public class GATTClientService extends Service {
     // Device scan callback
     private ScanCallback leScanCallback =
             new ScanCallback() {
+                @SuppressLint("MissingPermission")
                 @Override
                 public void onScanResult(int callbackType, ScanResult result) {
                     super.onScanResult(callbackType, result);
@@ -115,6 +119,13 @@ public class GATTClientService extends Service {
 
                     // debug logging to understand found devices
                     Log.d(TAG, "Available device: " + result);
+
+                    if(useAsServer(result.getDevice())){
+                        if(scanning){
+                            bluetoothLeScanner.stopScan(leScanCallback);
+                            scanning = false;
+                        }
+                    }
                 }
 
                 @Override
@@ -127,15 +138,13 @@ public class GATTClientService extends Service {
     private void scanLeDevice() {
         bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
 
-        UUID ATHLETE_INFORMATION_SERVICE = UUID.fromString("a173b614-8dff-455d-83d1-37de25b9432c");
-
         /*if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Bluetooth scan permission not granted");
             return;
         }*/
 
         ScanFilter filter = new ScanFilter.Builder()
-                //.setServiceUuid(new ParcelUuid(ATHLETE_INFORMATION_SERVICE))
+                .setServiceUuid(new ParcelUuid(ATHLETE_INFORMATION_SERVICE))
                 //.setServiceData(new ParcelUuid(ATHLETE_INFORMATION_SERVICE), "trainer".getBytes(StandardCharsets.UTF_8))
                 .build();
 
@@ -161,6 +170,23 @@ public class GATTClientService extends Service {
             scanning = false;
             bluetoothLeScanner.stopScan(leScanCallback);
         }
+    }
+
+    /**
+     * use this method to set the new server
+     * @param device
+     * @return
+     */
+    @SuppressLint("MissingPermission")
+    private boolean useAsServer(BluetoothDevice device){
+        ParcelUuid[] uuids = device.getUuids();
+        if( ! Arrays.asList(uuids).contains(ATHLETE_INFORMATION_SERVICE)){
+            Log.d(TAG, "the device '" + device.toString() + "' does not contain ATHLETE_INFORMATION_SERVICE UUID... Cannot use as server");
+            return false;
+        }
+        Log.i(TAG, "going to use the device '" + device + "' as server");
+        this.serverAddress = device;
+        return true;
     }
 
     @SuppressLint("MissingPermission")
