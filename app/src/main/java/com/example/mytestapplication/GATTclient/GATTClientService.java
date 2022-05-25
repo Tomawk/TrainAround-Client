@@ -85,6 +85,18 @@ public class GATTClientService extends Service {
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 // disconnected from the GATT Server
                 Log.d(TAG, "Disconnected from the GATT Server");
+            }else{
+                Log.v(TAG, "gatt: " + gatt + " | status: " + status + " | newState: " + newState);
+            }
+        }
+
+        @Override
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.i(TAG, "onServicesDiscovered found new service!");
+                //broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
+            } else {
+                Log.w(TAG, "onServicesDiscovered received: " + status);
             }
         }
     };
@@ -119,8 +131,8 @@ public class GATTClientService extends Service {
 
                     // debug logging to understand found devices
                     Log.d(TAG, "Available device: " + result);
-
-                    if(useAsServer(result.getDevice())){
+                    //Log.d(TAG, "scanRecord.getServiceUuids(): " + result.getScanRecord().getServiceUuids());
+                    if(useAsServer(result)){
                         if(scanning){
                             bluetoothLeScanner.stopScan(leScanCallback);
                             scanning = false;
@@ -159,8 +171,11 @@ public class GATTClientService extends Service {
                 @SuppressLint("MissingPermission")
                 @Override
                 public void run() {
-                    scanning = false;
-                    bluetoothLeScanner.stopScan(leScanCallback);
+                    if(scanning) {
+                        Log.v(TAG, "stopping BL scan because of timeout");
+                        scanning = false;
+                        bluetoothLeScanner.stopScan(leScanCallback);
+                    }
                 }
             }, SCAN_PERIOD);
 
@@ -174,18 +189,21 @@ public class GATTClientService extends Service {
 
     /**
      * use this method to set the new server
-     * @param device
+     * @param scanResult
      * @return
      */
     @SuppressLint("MissingPermission")
-    private boolean useAsServer(BluetoothDevice device){
-        ParcelUuid[] uuids = device.getUuids();
-        if( ! Arrays.asList(uuids).contains(ATHLETE_INFORMATION_SERVICE)){
+    private boolean useAsServer(ScanResult scanResult){
+        BluetoothDevice device = scanResult.getDevice();
+        List<ParcelUuid> uuids = scanResult.getScanRecord().getServiceUuids();
+        if( ! uuids.contains( new ParcelUuid(ATHLETE_INFORMATION_SERVICE) )){
             Log.d(TAG, "the device '" + device.toString() + "' does not contain ATHLETE_INFORMATION_SERVICE UUID... Cannot use as server");
+            Log.v(TAG, "available uuids: " + uuids + "ATHLETE_INFORMATION_SERVICE Uuid: " + ATHLETE_INFORMATION_SERVICE);
             return false;
         }
         Log.i(TAG, "going to use the device '" + device + "' as server");
         this.serverAddress = device;
+        //
         return true;
     }
 
@@ -207,7 +225,11 @@ public class GATTClientService extends Service {
 
         // connect to the GATT server on the device
         Log.d(TAG, "Connecting to " + device.toString());
-        bluetoothGatt = device.connectGatt(this, true, bluetoothGattCallback, 2);
+        bluetoothGatt = device.connectGatt(this, false, bluetoothGattCallback);
+        //Log.d(TAG, "device.connectGatt returned: " + bluetoothGatt.toString());
+        //Log.d(TAG, "bluetoothGatt.connect(): " + bluetoothGatt.connect());
+        //Log.d(TAG, "bluetoothGatt.discoverServices(): " + bluetoothGatt.discoverServices());
+        //Log.d(TAG, "bluetoothGatt.getServices(): " + bluetoothGatt.getServices().toString());
         return true;
     }
 
