@@ -158,4 +158,13 @@ public class MainActivity extends ComponentActivity {
         super.onPause();
     }
 
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy method called, going to unbind from GATTClientService");
+        //this.stopService(new Intent(getApplicationContext(), GATTClientService.class));
+        //bluetoothService.stopService();
+        //bluetoothService = null;
+        unbindService(serviceConnection);
+        super.onDestroy();
+    }
 }

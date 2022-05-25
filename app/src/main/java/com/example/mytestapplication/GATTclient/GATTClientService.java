@@ -1,6 +1,5 @@
 package com.example.mytestapplication.GATTclient;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -14,7 +13,6 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -26,12 +24,8 @@ import android.os.Process;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -250,6 +244,51 @@ public class GATTClientService extends Service {
         serviceHandler.sendMessage(msg);
 
         return binder;
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public boolean onUnbind(Intent intent) {
+
+        Log.d(TAG, "onUbind has been called, going to call service.stopSelf");
+
+        stopSelf();
+
+        return super.onUnbind(intent);
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onDestroy() {
+
+        Log.d(TAG, "onDestroy has been called, going to stop BLE Scan and service thread");
+
+        if(scanning){
+            bluetoothLeScanner.stopScan(leScanCallback);
+        }
+
+        thread.quit();
+
+        super.onDestroy();
+    }
+
+    enum GATT_UPDATE_TYPES{
+        GATT_SERVER_DISCOVERED,
+        GATT_SERVER_CONNECTED,
+        GATT_SERVER_DISCONNECTED
+    }
+
+    final static String GATT_UPDATES_ACTION = "gatt-updates";
+    final static String GATT_UPDATE_TYPE = "gatt-update-type";
+
+    /**
+     * call this method to notify the rest of the app for GATT connection changes
+     * @param updateType
+     */
+    private void broadcastUpdate(final GATT_UPDATE_TYPES updateType) {
+        final Intent intent = new Intent(GATT_UPDATES_ACTION);
+        intent.putExtra(GATT_UPDATE_TYPE, updateType);
+        sendBroadcast(intent);
     }
 
 }
