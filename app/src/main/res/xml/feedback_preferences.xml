@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:title="Rate our application"
+        android:summary="Please provide a rating from 1 to 5"
+        android:key="listRating"
+        android:defaultValue="4"
+        android:entries="@array/listArray"
+        android:entryValues="@array/listValues" />
+    <EditTextPreference
+        android:key="addComment"
+        android:summary="Please add a comment"
+        android:title="Comment"
+        android:inputType="text"
+        />
+    <Preference
+        android:title="Send Feedback"
+        android:key="feedback_btn"
+        android:fragment="com.example.mytestapplication.Fragments.SendFeedbackFragment"/>
+</PreferenceScreen>

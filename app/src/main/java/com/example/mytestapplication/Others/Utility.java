@@ -1,4 +1,4 @@
-package com.example.mytestapplication;
+package com.example.mytestapplication.Others;
 
 import android.content.Context;
 import android.util.Log;
@@ -46,7 +46,7 @@ public final class Utility {
         return ret;
     }
 
-    private boolean writeToFile(String data, Context context, String fileName) {
+    public static boolean writeToFile(String data, Context context, String fileName) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
             outputStreamWriter.write(data);

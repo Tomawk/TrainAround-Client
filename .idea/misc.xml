@@ -19,8 +19,10 @@
         <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/layout/preferences.xml" value="1.0154185022026432" />
         <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/menu/menu_main.xml" value="1.0704845814977975" />
         <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/xml/athlete_preferences.xml" value="0.1" />
+        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/xml/feedback_preferences.xml" value="1.0748898678414096" />
         <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/xml/preferences.xml" value="0.6" />
-        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/xml/settings_preferences.xml" value="0.6755725190839694" />
+        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/xml/sendfeedback_preferences.xml" value="1.0748898678414096" />
+        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/xml/settings_preferences.xml" value="0.1" />
       </map>
     </option>
   </component>

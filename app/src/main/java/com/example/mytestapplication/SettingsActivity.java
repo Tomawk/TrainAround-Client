@@ -1,11 +1,10 @@
 package com.example.mytestapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
 
-import com.example.mytestapplication.R;
+import com.example.mytestapplication.Fragments.SettingsFragment;
 
 public class SettingsActivity extends FragmentActivity {
 

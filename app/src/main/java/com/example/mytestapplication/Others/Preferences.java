@@ -1,4 +1,4 @@
-package com.example.mytestapplication;
+package com.example.mytestapplication.Others;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,7 +21,9 @@ public class Preferences implements SharedPreferences {
     private static final String ATHLETE_WEIGHT_NOT_FOUND = "Weight not inserted";
     private static final String ATHLETE_HEIGHT_KEY = "athleteHeight";
     private static final String ATHLETE_HEIGHT_NOT_FOUND = "Height not inserted";
-    private static final String DARK_THEME_KEY = "themeSwitch";
+    private static final String FEEDBACK_RATING = "listRating";
+    private static final String FEEDBACK_COMMENT = "addComment";
+
 
     private static Preferences myPreferences;
     private static SharedPreferences sharedPreferences;
@@ -119,8 +121,12 @@ public class Preferences implements SharedPreferences {
         return sharedPreferences.getString(ATHLETE_HEIGHT_KEY, ATHLETE_HEIGHT_NOT_FOUND);
     }
 
-
-    public static boolean getDarkThemeValue(){
-        return sharedPreferences.getBoolean(DARK_THEME_KEY, false);
+    public static String getFeedbackComment(){
+        return sharedPreferences.getString(FEEDBACK_COMMENT, "Comment not inserted");
     }
+
+    public static String getFeedbackRating(){
+        return sharedPreferences.getString(FEEDBACK_RATING, "Comment not inserted");
+    }
+
 }
