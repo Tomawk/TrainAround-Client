@@ -23,12 +23,12 @@ public final class BluetoothUtility {
 
         int bluetooth_scanning = ContextCompat.checkSelfPermission(mainActivity, Manifest.permission.BLUETOOTH_SCAN);
         int bluetooth_connect = ContextCompat.checkSelfPermission(mainActivity, Manifest.permission.BLUETOOTH_CONNECT);
-        int background_location = ContextCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        //int background_location = ContextCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
         List<String> listPermissionsNeeded = new ArrayList<>();
 
-        if (background_location != PackageManager.PERMISSION_GRANTED) {
+        /*if (background_location != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
-        }
+        }*/
         if (bluetooth_scanning != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.BLUETOOTH_SCAN);
         }
