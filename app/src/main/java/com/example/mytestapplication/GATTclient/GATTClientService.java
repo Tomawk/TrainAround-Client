@@ -6,13 +6,19 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.aware.Characteristics;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -22,9 +28,16 @@ import android.os.Message;
 import android.os.ParcelUuid;
 import android.os.Process;
 import android.util.Log;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.example.mytestapplication.R;
+import com.example.mytestapplication.Transactions;
+
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,6 +48,16 @@ public class GATTClientService extends Service {
     public static final String TAG = "BluetoothLeService";
 
     private static UUID ATHLETE_INFORMATION_SERVICE = UUID.fromString("a173b614-8dff-455d-83d1-37de25b9432c");
+    public static UUID ATHLETE_NAME_CHARACTERISTIC = UUID.fromString("4fe10359-2ce1-4e3e-848d-aec36a32930c");
+
+    public static UUID HEART_RATE_SERVICE = UUID.fromString("0000180d-0000-1000-8000-00805f9b34fb");
+    public static UUID HEART_RATE_CHARACTERISTIC = UUID.fromString("00002a37-0000-1000-8000-00805f9b34fb");
+
+    public static UUID MOVEMENT_SERVICE = UUID.fromString("6b94f55a-dc3f-11ec-9d64-0242ac120002");
+    public static UUID RECOGNIZED_ACTIVITY_CHARACTERISTIC = UUID.fromString("6b94f7e4-dc3f-11ec-9d64-0242ac120002");
+    public static UUID SPEED_CHARACTERISTIC = UUID.fromString("6b94f92e-dc3f-11ec-9d64-0242ac120002");
+    public static UUID PEACE_CHARACTERISTIC = UUID.fromString("6b94fc58-dc3f-11ec-9d64-0242ac120002");
+    public static UUID STEP_COUNTER_CHARACTERISTIC = UUID.fromString("6b94fd70-dc3f-11ec-9d64-0242ac120002");
 
     /* Scanning fields */
     private BluetoothDevice serverAddress;
@@ -61,6 +84,7 @@ public class GATTClientService extends Service {
             // we insert here the functionalities executed by the thread
             initialize();
             scanLeDevice();
+            Log.d(TAG, "handleMessage on thread: " + Process.getThreadPriority(Process.myTid()));
         }
     }
 
@@ -70,15 +94,41 @@ public class GATTClientService extends Service {
         }
     }
 
+    private BroadcastReceiver transactionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            Transactions.TRANSACTION_TYPE transaction_type = (Transactions.TRANSACTION_TYPE) intent.getSerializableExtra(Transactions.TRANSACTION_TYPES);
+            Log.i(TAG, "Transaction received: " + transaction_type);
+
+            switch (transaction_type) {
+                case NAME:
+                    byte[] athleteName = intent.getByteArrayExtra(Transactions.DATA);
+                    writeCharacteristic(ATHLETE_INFORMATION_SERVICE, ATHLETE_NAME_CHARACTERISTIC, athleteName);
+                    break;
+                case HEART_RATE:
+                    byte[] heartRateValue = intent.getByteArrayExtra(Transactions.DATA);
+                    writeCharacteristic(HEART_RATE_SERVICE, HEART_RATE_CHARACTERISTIC, heartRateValue);
+                    break;
+                case SPEED:
+                    byte[] speedValue = intent.getByteArrayExtra(Transactions.DATA);
+                    writeCharacteristic(MOVEMENT_SERVICE, SPEED_CHARACTERISTIC, speedValue);
+                    break;
+            }
+        }
+    };
+
     private final BluetoothGattCallback bluetoothGattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 // successfully connected to the GATT Server
                 Log.d(TAG, "Successfully connected to the GATT Server");
+                discoverServices();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 // disconnected from the GATT Server
                 Log.d(TAG, "Disconnected from the GATT Server");
+                broadcastUpdate(GATT_UPDATE_TYPES.GATT_SERVER_DISCONNECTED);
             }else{
                 Log.v(TAG, "gatt: " + gatt + " | status: " + status + " | newState: " + newState);
             }
@@ -88,7 +138,7 @@ public class GATTClientService extends Service {
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.i(TAG, "onServicesDiscovered found new service!");
-                //broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
+                broadcastUpdate(GATT_UPDATE_TYPES.GATT_SERVER_CONNECTED);
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
             }
@@ -197,10 +247,15 @@ public class GATTClientService extends Service {
         }
         Log.i(TAG, "going to use the device '" + device + "' as server");
         this.serverAddress = device;
-        //
+        broadcastUpdate(GATT_UPDATE_TYPES.GATT_SERVER_DISCOVERED);
+
         return true;
     }
 
+    /**
+     * method to connect to the GATT server, using the address retrieved by the scanning
+     * @return
+     */
     @SuppressLint("MissingPermission")
     public boolean connect() {
         if (bluetoothAdapter == null || serverAddress == null) {
@@ -227,10 +282,54 @@ public class GATTClientService extends Service {
         return true;
     }
 
+    /**
+     *
+     */
+    @SuppressLint("MissingPermission")
+    public void discoverServices(){
+        bluetoothGatt.discoverServices();
+        return;
+    }
+
+    /**
+     * method to write a characteristic to the server
+     * @param serviceUuid
+     * @param characteristicUuid
+     * @param value to write on the server
+     * @return
+     */
+    public boolean writeCharacteristic(UUID serviceUuid, UUID characteristicUuid, byte[] value){
+
+        //check bluetoothGatt is available
+        if (bluetoothGatt == null) {
+            Log.e(TAG, "writeCharacteristic(): lost GATT server connection!");
+            return false;
+        }
+        BluetoothGattService service = bluetoothGatt.getService(serviceUuid);
+        if (service == null) {
+            Log.e(TAG, "writeCharacteristic(): service not available!");
+            return false;
+        }
+        BluetoothGattCharacteristic characteristic = service.getCharacteristic(characteristicUuid);
+        if (characteristic == null) {
+            Log.e(TAG, "writeCharacteristic(): characteristic not found!");
+            return false;
+        }
+
+        characteristic.setValue(value);
+
+        @SuppressLint("MissingPermission")
+        boolean status = bluetoothGatt.writeCharacteristic(characteristic);
+        return status;
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "GATTclient binding");
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(transactionReceiver,
+                new IntentFilter(Transactions.TRANSACTION_ACTION));
 
         thread = new HandlerThread("ServiceStartArguments",
                 Process.THREAD_PRIORITY_BACKGROUND);
@@ -266,20 +365,24 @@ public class GATTClientService extends Service {
         if(scanning){
             bluetoothLeScanner.stopScan(leScanCallback);
         }
+        if(bluetoothGatt != null){
+            Log.v(TAG, "Disconnecting from server");
+            bluetoothGatt.close();
+            bluetoothGatt = null;
+        }
 
         thread.quit();
-
         super.onDestroy();
     }
 
-    enum GATT_UPDATE_TYPES{
+    public enum GATT_UPDATE_TYPES{
         GATT_SERVER_DISCOVERED,
         GATT_SERVER_CONNECTED,
         GATT_SERVER_DISCONNECTED
     }
 
-    final static String GATT_UPDATES_ACTION = "gatt-updates";
-    final static String GATT_UPDATE_TYPE = "gatt-update-type";
+    public final static String GATT_UPDATES_ACTION = "gatt-updates";
+    public final static String GATT_UPDATE_TYPE = "gatt-update-type";
 
     /**
      * call this method to notify the rest of the app for GATT connection changes
@@ -288,7 +391,7 @@ public class GATTClientService extends Service {
     private void broadcastUpdate(final GATT_UPDATE_TYPES updateType) {
         final Intent intent = new Intent(GATT_UPDATES_ACTION);
         intent.putExtra(GATT_UPDATE_TYPE, updateType);
-        sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
 }
