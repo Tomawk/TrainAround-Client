@@ -2,6 +2,7 @@ package com.example.mytestapplication.SensorHandling;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -62,7 +63,8 @@ public class AccelerometerHandling implements SensorEventListener {
         String y_axis = Float.toString(values[1]);
         String z_axis = Float.toString(values[2]);
         String output_str = "x_axis = " + x_axis + "; y_axis = " + y_axis + "; z_axis = " + z_axis + ";";
-        TextView textView_print = (TextView) ((Activity)context).findViewById(R.id.textView_accl);
-        textView_print.setText("Accelerometer: " + output_str);
+        TextView textView_accl = (TextView) ((Activity)context).findViewById(R.id.textView_accl);
+        textView_accl.setText("Accelerometer: " + output_str);
+        textView_accl.setTextColor(Color.GREEN);
     }
 }

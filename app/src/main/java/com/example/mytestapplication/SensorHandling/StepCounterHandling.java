@@ -2,6 +2,7 @@ package com.example.mytestapplication.SensorHandling;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -63,7 +64,8 @@ public class StepCounterHandling implements SensorEventListener {
     }
 
     public void printStepValues(float new_steps){
-        TextView textView_print = (TextView) ((Activity)context).findViewById(R.id.textView_steps);
-        textView_print.setText("Step Counter: " + new_steps);
+        TextView textView_steps = (TextView) ((Activity)context).findViewById(R.id.textView_steps);
+        textView_steps.setText("Step Counter: " + new_steps);
+        textView_steps.setTextColor(Color.GREEN);
     }
 }

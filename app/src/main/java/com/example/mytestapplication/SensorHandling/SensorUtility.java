@@ -1,10 +1,14 @@
 package com.example.mytestapplication.SensorHandling;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.util.Log;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -15,7 +19,39 @@ import java.util.List;
 
 public final class SensorUtility {
 
+    static final String[] PERMISSIONS = {
+            Manifest.permission.ACTIVITY_RECOGNITION, //TODO EMULATOR DOESN'T HAVE STEPCOUNTER SO MUST BE COMMENTED
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.BODY_SENSORS
+    };
+
+
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+
+
+    private static boolean hasPermissions(String[] permissions, Context ctx) {
+        if (permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(ctx , permission) != PackageManager.PERMISSION_GRANTED) {
+                    Log.d("PERMISSIONS", "Permission is not granted: " + permission);
+                    return false;
+                }
+                Log.d("PERMISSIONS", "Permission already granted: " + permission);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static void askPermissions(ActivityResultLauncher<String[]> multiplePermissionLauncher, Context ctx) {
+        if (!hasPermissions(PERMISSIONS,ctx)) {
+            Log.d("PERMISSIONS", "Launching multiple contract permission launcher for ALL required permissions");
+            multiplePermissionLauncher.launch(PERMISSIONS);
+        } else {
+            Log.d("PERMISSIONS", "All permissions are already granted");
+        }
+    }
 
     public static String getSensorList(SensorManager sm){
         List<Sensor> sensorList = sm.getSensorList(Sensor.TYPE_ALL);
@@ -26,35 +62,8 @@ public final class SensorUtility {
         return ret_str;
     }
 
-    public static boolean checkAndRequestPermissions(MainActivity mainActivity) {
-
-        int activity_recognition = ContextCompat.checkSelfPermission(mainActivity, Manifest.permission.ACTIVITY_RECOGNITION);
-        int location_fine = ContextCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_FINE_LOCATION);
-        int location_coarse = ContextCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_COARSE_LOCATION);
-        int body_sensors = ContextCompat.checkSelfPermission(mainActivity,Manifest.permission.BODY_SENSORS);
-        List<String> listPermissionsNeeded = new ArrayList<>();
-
-
-        if (activity_recognition != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.ACTIVITY_RECOGNITION);
-        }
-        if (location_fine != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-        if (location_coarse != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-        }
-        if (body_sensors != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.BODY_SENSORS);
-        }
-
-        if (!listPermissionsNeeded.isEmpty())
-        {
-            ActivityCompat.requestPermissions(mainActivity,listPermissionsNeeded.toArray
-                    (new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
-            return false;
-        }
-        return true;
+    public static String[] getPERMISSIONS() {
+        return PERMISSIONS;
     }
 
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.example.mytestapplication.Others.Preferences;
+import com.example.mytestapplication.SensorHandling.SensorUtility;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,11 +27,16 @@ public class MainActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> someActivityResultLauncher;
     private Preferences myPreferences;
 
+
+    private ActivityResultContracts.RequestMultiplePermissions multiplePermissionsContract;
+    private ActivityResultLauncher<String[]> multiplePermissionLauncher;
+
+
     private SharedPreferences.OnSharedPreferenceChangeListener sharedPrefListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                    //ATHLETE NAME
+                    //TextView must be updated with the athlete name specified
                     updateAthleteTextView(Preferences.getAtheleteName());
 
                 }
@@ -42,12 +49,17 @@ public class MainActivity extends AppCompatActivity {
 
         myPreferences = Preferences.getPreferences(this);
         myPreferences.registerOnSharedPreferenceChangeListener(sharedPrefListener); // register for changes on preferences
-/*
-        if(!SensorUtility.checkAndRequestPermissions(this)) {
-            Log.d(TAG,"Not all permissions have been granted!");
-        } else {
-            Log.d(TAG,"Permissions have been granted!");
-        }*/
+
+        multiplePermissionsContract = new ActivityResultContracts.RequestMultiplePermissions();
+        multiplePermissionLauncher = registerForActivityResult(multiplePermissionsContract, isGranted -> {
+            Log.d("PERMISSIONS", "Launcher result: " + isGranted.toString());
+            if (isGranted.containsValue(false)) {
+                Log.d("PERMISSIONS", "At least one of the permissions was not granted, launching again...");
+                multiplePermissionLauncher.launch(SensorUtility.getPERMISSIONS());
+            }
+        });
+
+        SensorUtility.askPermissions(multiplePermissionLauncher,this);
 
         setContentView(R.layout.activity_main);
 
@@ -103,16 +115,6 @@ public class MainActivity extends AppCompatActivity {
         TextView athleteNameLabel = (TextView) findViewById(R.id.welcome_textview);
         athleteNameLabel.setText("Welcome, " + athleteName);
     }
-
-    public void updateDarkTheme(boolean darkThemeEnabled) {
-        if (darkThemeEnabled){
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        }
-        else{
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
-    }
-
 
     public void openSomeActivityForResult() {
         Intent intent = new Intent(this, NamePopUpActivity.class);

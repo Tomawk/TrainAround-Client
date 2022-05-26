@@ -14,6 +14,10 @@
         android:inputType="text"
         android:singleLine="true"
         />
+    <CheckBoxPreference
+        android:title="Male"
+        android:defaultValue="true"
+        android:key="checkboxMale" />
     <EditTextPreference
         android:key="athleteAge"
         android:summary="Please provide your age"
