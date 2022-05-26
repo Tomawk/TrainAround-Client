@@ -3,6 +3,7 @@ package com.example.mytestapplication;
 import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -40,8 +41,11 @@ import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MainActivity extends ComponentActivity {
 
@@ -60,23 +64,19 @@ public class MainActivity extends ComponentActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
 
             bluetoothService = ((GATTClientService.LocalBinder) service).getService();
-            if (bluetoothService != null) {
-                if (!bluetoothService.initialize()) {
-                    Log.e(TAG, "Unable to initialize Bluetooth");
+            if (bluetoothService == null) {
+                    Log.e(TAG, "Bluetooth GATT Client unavailable!");
                     finish();
-                }
-
-                // after the service connection the button is bound with the onclick function
-
-                Button button = (Button)findViewById(R.id.connect_btn);
-                button.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View view) {
-                        Log.d(TAG, "Going to connect...");
-                        bluetoothService.connect();
-                    }
-                });
             }
+
+            Button button = (Button)findViewById(R.id.connect_btn);
+            button.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    Log.d(TAG, "Going to connect...");
+                    bluetoothService.connect();
+                }
+            });
         }
 
         @Override
@@ -84,6 +84,31 @@ public class MainActivity extends ComponentActivity {
             bluetoothService = null;
         }
     };
+
+    private BroadcastReceiver clientReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            GATTClientService.GATT_UPDATE_TYPES update_type = (GATTClientService.GATT_UPDATE_TYPES) intent.getSerializableExtra(GATTClientService.GATT_UPDATE_TYPE);
+            Log.i(TAG, "Update received from the client " + update_type);
+
+            switch (update_type) {
+                case GATT_SERVER_CONNECTED:
+                    Button startActivityButton = (Button) findViewById(R.id.start_btn);
+                    startActivityButton.setEnabled(true);
+                    Transactions.writeAthleteName(getApplicationContext(), athleteName);
+                    break;
+                case GATT_SERVER_DISCOVERED:
+                    Button connectBtn = (Button) findViewById(R.id.connect_btn);
+                    connectBtn.setEnabled(true);
+                    break;
+                case GATT_SERVER_DISCONNECTED:
+                    break;
+            }
+
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +141,8 @@ public class MainActivity extends ComponentActivity {
             }
         });
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(clientReceiver,
+                new IntentFilter(GATTClientService.GATT_UPDATES_ACTION));
 
         athleteName = Utility.readFromFile(this, settings_filename);
 
