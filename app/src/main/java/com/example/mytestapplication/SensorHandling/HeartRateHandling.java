@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.mytestapplication.MainActivity;
 import com.example.mytestapplication.R;
+import com.example.mytestapplication.Transactions;
 
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class HeartRateHandling implements SensorEventListener {
 
     public void onSensorChanged(SensorEvent event) {
         // Here we call a method in MainActivity and pass it the values from the SensorChanged event
+        Transactions.writeHeartRate(context, (int) event.values[0]);
         printHeartMonitoring(event.values);
 
     }

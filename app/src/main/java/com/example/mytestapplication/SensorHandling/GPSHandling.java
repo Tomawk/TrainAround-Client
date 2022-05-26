@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.example.mytestapplication.MainActivity;
 import com.example.mytestapplication.R;
+import com.example.mytestapplication.Transactions;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
