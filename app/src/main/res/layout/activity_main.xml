@@ -13,6 +13,10 @@
 
 
 
+
+
+
+
     ]]>
 
     <Button
@@ -20,24 +24,26 @@
         android:layout_width="133dp"
         android:layout_height="28dp"
         android:background="@drawable/my_btn_radius"
+        android:enabled="false"
         android:text="Start Activity"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.044" />
+        app:layout_constraintVertical_bias="0.1" />
 
     <Button
         android:id="@+id/connect_btn"
         android:layout_width="133dp"
         android:layout_height="28dp"
         android:background="@drawable/my_btn_radius"
+        android:enabled="false"
         android:text="Connect"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.276" />
+        app:layout_constraintVertical_bias="0.339" />
 
     <TextView
         android:id="@+id/welcome_textview"
@@ -47,6 +53,7 @@
         android:text="Welcome, "
         android:textAlignment="center"
         android:textColor="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/imageView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,7 +63,7 @@
         android:id="@+id/imageView2"
         android:layout_width="76dp"
         android:layout_height="67dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="4dp"
         android:src="@drawable/running_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
