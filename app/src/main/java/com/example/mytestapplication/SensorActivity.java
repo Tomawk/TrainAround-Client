@@ -17,6 +17,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.text.Html;
 import android.util.Log;
@@ -31,6 +32,8 @@ import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.Locale;
+
 public class SensorActivity extends Activity {
 
     private FusedLocationProviderClient fusedLocationClient;
@@ -40,6 +43,7 @@ public class SensorActivity extends Activity {
     private HeartRateHandling heartRateHandling;
     private boolean locationUpdating = false;
     private boolean sensorsUpdating = true;
+    private int seconds = 0;
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
@@ -89,6 +93,9 @@ public class SensorActivity extends Activity {
         accelerometerHandling = new AccelerometerHandling(sensorManager, this);
         stepCounterHandling = new StepCounterHandling(sensorManager, this);
         heartRateHandling = new HeartRateHandling(sensorManager,this);
+
+        //
+        runTimer();
     }
 
 
@@ -110,6 +117,58 @@ public class SensorActivity extends Activity {
         heartRateHandling.onPause();
         //TODO: Vogliamo stoppare gli update delle location quando l'app è in pausa o no?
         //fusedLocationClient.removeLocationUpdates(gpsHandling.getLocationCallback());
+    }
+
+    private void runTimer()
+    {
+
+        // Get the text view.
+        final TextView timeView
+                = (TextView)findViewById(
+                R.id.textView_stopwatch);
+
+        // Creates a new Handler
+        final Handler handler
+                = new Handler();
+
+        // Call the post() method,
+        // passing in a new Runnable.
+        // The post() method processes
+        // code without a delay,
+        // so the code in the Runnable
+        // will run almost immediately.
+        handler.post(new Runnable() {
+            @Override
+
+            public void run()
+            {
+                int hours = seconds / 3600;
+                int minutes = (seconds % 3600) / 60;
+                int secs = seconds % 60;
+
+                // Format the seconds into hours, minutes,
+                // and seconds.
+                String time
+                        = String
+                        .format(Locale.getDefault(),
+                                "%d:%02d:%02d", hours,
+                                minutes, secs);
+
+                // Set the text view text.
+                timeView.setText("Timer: " + time);
+                timeView.setTextColor(Color.BLACK);
+
+                // If running is true, increment the
+                // seconds variable.
+                if (true) { //TODO ADD A WAY TO STOP (?)
+                    seconds++;
+                }
+
+                // Post the code again
+                // with a delay of 1 second.
+                handler.postDelayed(this, 1000);
+            }
+        });
     }
 
     @SuppressLint("MissingPermission")

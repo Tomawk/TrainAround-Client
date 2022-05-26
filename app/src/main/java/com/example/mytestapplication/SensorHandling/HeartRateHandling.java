@@ -24,7 +24,6 @@ public class HeartRateHandling implements SensorEventListener {
     private final Context context;
 
     public HeartRateHandling(SensorManager sm, Context ctx){
-        // this.context = context;
         context = ctx;
         mSensorManager = sm;
         mHeartMonitoring = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
