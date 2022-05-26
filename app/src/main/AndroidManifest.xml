@@ -16,7 +16,7 @@
         android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <!-- <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> -->
 
     <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- Activity Recognition permissions -->
     <!-- Required for 28 and below. -->
@@ -34,7 +34,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
-        <service android:name=".GATTclient.GATTClientService"/>
+        <service android:name=".GATTclient.GATTClientService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true"/>
         <activity
             android:name=".NamePopUpActivity"
             android:exported="false" />
