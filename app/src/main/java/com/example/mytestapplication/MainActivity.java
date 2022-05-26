@@ -1,6 +1,5 @@
 package com.example.mytestapplication;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
@@ -12,34 +11,29 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.ComponentActivity;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.appcompat.app.AppCompatDelegate;
 
+import com.example.mytestapplication.Others.Preferences;
 import com.example.mytestapplication.GATTclient.BluetoothUtility;
 import com.example.mytestapplication.GATTclient.GATTClientService;
 import com.example.mytestapplication.SensorHandling.AccelerometerHandling;
 import com.example.mytestapplication.SensorHandling.GPSHandling;
 import com.example.mytestapplication.SensorHandling.HeartRateHandling;
 import com.example.mytestapplication.SensorHandling.SensorUtility;
-import com.example.mytestapplication.SensorHandling.StepCounterHandling;
-import com.example.mytestapplication.databinding.ActivityMainBinding;
-import com.google.android.gms.location.ActivityRecognition;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -47,13 +41,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MainActivity extends ComponentActivity {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private boolean user_set = false;
     private String athleteName;
-    private String settings_filename = "nameDump.txt";
     private ActivityResultLauncher<Intent> someActivityResultLauncher;
+    private Preferences myPreferences;
+
+
+    private ActivityResultContracts.RequestMultiplePermissions multiplePermissionsContract;
+    private ActivityResultLauncher<String[]> multiplePermissionLauncher;
+
+
+    private SharedPreferences.OnSharedPreferenceChangeListener sharedPrefListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    //TextView must be updated with the athlete name specified
+                    updateAthleteTextView(Preferences.getAtheleteName());
+
+                }
+            };
 
     /* Bluetooth connection fields */
     private GATTClientService bluetoothService;
@@ -125,6 +134,19 @@ public class MainActivity extends ComponentActivity {
         } else {
             Log.d(TAG,"Bluetooth permissions have been granted!");
         }
+        myPreferences = Preferences.getPreferences(this);
+        myPreferences.registerOnSharedPreferenceChangeListener(sharedPrefListener); // register for changes on preferences
+
+        multiplePermissionsContract = new ActivityResultContracts.RequestMultiplePermissions();
+        multiplePermissionLauncher = registerForActivityResult(multiplePermissionsContract, isGranted -> {
+            Log.d("PERMISSIONS", "Launcher result: " + isGranted.toString());
+            if (isGranted.containsValue(false)) {
+                Log.d("PERMISSIONS", "At least one of the permissions was not granted, launching again...");
+                multiplePermissionLauncher.launch(SensorUtility.getPERMISSIONS());
+            }
+        });
+
+        SensorUtility.askPermissions(multiplePermissionLauncher,this);
 
         setContentView(R.layout.activity_main);
 
@@ -132,8 +154,8 @@ public class MainActivity extends ComponentActivity {
         Intent gattServiceIntent = new Intent(this, GATTClientService.class);
         boolean bound = bindService(gattServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-        Button button = (Button)findViewById(R.id.start_btn);
-        button.setOnClickListener(new View.OnClickListener(){
+        Button start_activity_btn = (Button)findViewById(R.id.start_btn);
+        start_activity_btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 Intent myIntent = new Intent(getApplicationContext(),SensorActivity.class);
@@ -141,12 +163,21 @@ public class MainActivity extends ComponentActivity {
             }
         });
 
+        ImageView settings_btn = (ImageView) findViewById(R.id.settings_btn);
+        settings_btn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(getApplicationContext(),SettingsActivity.class);
+                startActivity(myIntent);
+            }
+        });
+
         LocalBroadcastManager.getInstance(this).registerReceiver(clientReceiver,
                 new IntentFilter(GATTClientService.GATT_UPDATES_ACTION));
+        //firstly checks whether the athlete name has already been set
+        athleteName = Preferences.getAtheleteName();
 
-        athleteName = Utility.readFromFile(this, settings_filename);
-
-        if(!athleteName.equals("")){
+        if(!athleteName.equals("Name not inserted")){
             user_set=true;
         }
 
@@ -170,6 +201,12 @@ public class MainActivity extends ComponentActivity {
             trainerNameLabel.append(athleteName);
         }
 
+
+    }
+
+    public void updateAthleteTextView(String athleteName){
+        TextView athleteNameLabel = (TextView) findViewById(R.id.welcome_textview);
+        athleteNameLabel.setText("Welcome, " + athleteName);
     }
 
     public void openSomeActivityForResult() {

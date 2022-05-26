@@ -2,6 +2,7 @@ package com.example.mytestapplication.SensorHandling;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -24,7 +25,6 @@ public class HeartRateHandling implements SensorEventListener {
     private final Context context;
 
     public HeartRateHandling(SensorManager sm, Context ctx){
-        // this.context = context;
         context = ctx;
         mSensorManager = sm;
         mHeartMonitoring = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
@@ -62,7 +62,8 @@ public class HeartRateHandling implements SensorEventListener {
     }
 
     public void printHeartMonitoring(float[] values){
-        TextView textView_print2 = (TextView) ((Activity)context).findViewById(R.id.textView_heart);;
-        textView_print2.setText("Heart Rate: " + values[0]);
+        TextView textView_heart = (TextView) ((Activity)context).findViewById(R.id.textView_heart);;
+        textView_heart.setText("Heart Rate: " + values[0]);
+        textView_heart.setTextColor(Color.GREEN);
     }
 }

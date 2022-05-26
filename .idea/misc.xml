@@ -12,9 +12,18 @@
         <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/drawable/my_btn_border.xml" value="0.124" />
         <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/drawable/my_btn_radius.xml" value="0.124" />
         <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/drawable/my_btn_radius_fcs.xml" value="0.124" />
-        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/layout/activity_main.xml" value="0.6" />
+        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/layout/activity_main.xml" value="0.72" />
         <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/layout/activity_name_pop_up.xml" value="0.536" />
-        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/layout/activity_sensor.xml" value="0.536" />
+        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/layout/activity_sensor.xml" value="0.4" />
+        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/layout/activity_settings.xml" value="0.26838235294117646" />
+        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/layout/ggrg.xml" value="0.5929752066115702" />
+        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/layout/preferences.xml" value="1.0154185022026432" />
+        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/menu/menu_main.xml" value="1.0704845814977975" />
+        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/xml/athlete_preferences.xml" value="0.536" />
+        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/xml/feedback_preferences.xml" value="1.0748898678414096" />
+        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/xml/preferences.xml" value="0.6" />
+        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/xml/sendfeedback_preferences.xml" value="1.0748898678414096" />
+        <entry key="..\:/Users/39331/AndroidStudioProjects/TrainingApp_Project/app/src/main/res/xml/settings_preferences.xml" value="0.1" />
       </map>
     </option>
   </component>

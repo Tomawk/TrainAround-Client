@@ -1,4 +1,4 @@
-package com.example.mytestapplication;
+package com.example.mytestapplication.Others;
 
 import android.content.Context;
 import android.util.Log;
@@ -8,6 +8,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
+
+// TODO: AL MOMENTO E' INUTILE MA POTREBBE SERVIRCI, NEL CASO LA ELIMINIAMO
 
 public final class Utility {
 
@@ -40,5 +44,18 @@ public final class Utility {
         }
 
         return ret;
+    }
+
+    public static boolean writeToFile(String data, Context context, String fileName) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+            return true;
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+            return false;
+        }
     }
 }

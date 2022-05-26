@@ -37,6 +37,12 @@
         <service android:name=".GATTclient.GATTClientService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="true"/>
+        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            />
         <activity
             android:name=".NamePopUpActivity"
             android:exported="false" />
@@ -58,7 +64,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

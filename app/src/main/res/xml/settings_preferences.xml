@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:key="athlete_preferences"
+        android:summary="Settings related to the Athlete"
+        android:title="Athlete settings"
+        android:fragment="com.example.mytestapplication.Fragments.AthleteSettingsFragment"/>
+    <Preference
+        android:key="feedback"
+        android:title="Send feedback"
+        android:summary="Report technical issues or suggest new features"
+        android:fragment="com.example.mytestapplication.Fragments.FeedbackFragment"/>
+</PreferenceScreen>
