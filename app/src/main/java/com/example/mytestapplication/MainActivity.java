@@ -26,6 +26,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.mytestapplication.Others.Preferences;
 import com.example.mytestapplication.GATTclient.BluetoothUtility;
@@ -123,11 +124,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(!SensorUtility.checkAndRequestPermissions(this)) {
+        /*if(!SensorUtility.checkAndRequestPermissions(this)) {
             Log.d(TAG,"Not all sensors permissions have been granted!");
         } else {
             Log.d(TAG,"Sensor permissions have been granted!");
-        }
+        }*/
 
         if(!BluetoothUtility.checkAndRequestBluetoothPermissions(this)) {
             Log.d(TAG,"Not all Bluetooth permissions have been granted!");
