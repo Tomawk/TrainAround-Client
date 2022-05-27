@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.mytestapplication.MainActivity;
 import com.example.mytestapplication.R;
+import com.example.mytestapplication.Transactions;
 
 import java.util.List;
 
@@ -60,6 +61,7 @@ public class StepCounterHandling implements SensorEventListener {
         } else {
             float new_steps = event.values[0] - initialSteps;
             printStepValues(new_steps);
+            Transactions.writeSteps(context.getApplicationContext(), new_steps);
         }
     }
 

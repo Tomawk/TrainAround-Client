@@ -22,6 +22,7 @@ public class Transactions {
         HEART_RATE,
         SPEED,
         STEPS,
+        ACTIVITY,
         PACE
     }
 
@@ -31,8 +32,8 @@ public class Transactions {
     }
 
     public static void writeHeartRate(Context context, int heartRate) {
-        BigInteger bigInt = BigInteger.valueOf(heartRate);
-        broadcastMessage(context, TRANSACTION_TYPE.HEART_RATE, bigInt.toByteArray());
+        BigInteger bigIntHR = BigInteger.valueOf(heartRate);
+        broadcastMessage(context, TRANSACTION_TYPE.HEART_RATE, bigIntHR.toByteArray());
         return;
     }
 
@@ -40,6 +41,25 @@ public class Transactions {
         double speedRounded = Math.round(speed * 100.0) / 100.0;
         byte[] speedBytes = ByteBuffer.allocate(8).putDouble(speedRounded).array();
         broadcastMessage(context, TRANSACTION_TYPE.SPEED, speedBytes);
+        return;
+    }
+
+    public static void writeSteps(Context context, float steps){
+        BigInteger bigIntSteps = BigInteger.valueOf((int) steps);
+        broadcastMessage(context, TRANSACTION_TYPE.STEPS, bigIntSteps.toByteArray());
+        return;
+    }
+
+    public static void writeActivity(Context context, String activityName, int activityInt){
+        BigInteger bigIntActivity = BigInteger.valueOf(activityInt);
+        broadcastMessage(context, TRANSACTION_TYPE.ACTIVITY, bigIntActivity.toByteArray());
+        return;
+    }
+
+    public static void writePace(Context context, double pace) {
+        double paceRounded = Math.round(pace * 10.0) / 10.0;
+        byte[] paceBytes = ByteBuffer.allocate(8).putDouble(paceRounded).array();
+        broadcastMessage(context, TRANSACTION_TYPE.PACE, paceBytes);
         return;
     }
 

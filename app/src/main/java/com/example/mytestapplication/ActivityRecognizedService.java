@@ -43,56 +43,45 @@ public class ActivityRecognizedService extends IntentService {
     private void handleDetectedActivities(List<DetectedActivity> probableActivities) {
         for (DetectedActivity activity : probableActivities) {
             switch (activity.getType()) {
-                case DetectedActivity.IN_VEHICLE: {
+                /*case DetectedActivity.IN_VEHICLE: {
                     Log.e("ActivityRecogition", "In Vehicle: " + activity.getConfidence());
                     if (activity.getConfidence() >= 75) {
-                        sendMessageToActivity("IN_VEHICLE");
+                        sendMessageToActivity("IN_VEHICLE", DetectedActivity.IN_VEHICLE);
                     }
                     break;
-                }
+                }*/
                 case DetectedActivity.ON_BICYCLE: {
                     Log.e("ActivityRecogition", "On Bicycle: " + activity.getConfidence());
                     if (activity.getConfidence() >= 75) {
-                        sendMessageToActivity("ON_BICYCLE");
-                    }
-                    break;
-                }
-                case DetectedActivity.ON_FOOT: {
-                    Log.e("ActivityRecogition", "On Foot: " + activity.getConfidence());
-                    if (activity.getConfidence() >= 75) {
-                        sendMessageToActivity("ON_FOOT");
+                        sendMessageToActivity("ON_BICYCLE", DetectedActivity.ON_BICYCLE);
                     }
                     break;
                 }
                 case DetectedActivity.RUNNING: {
                     Log.e("ActivityRecogition", "Running: " + activity.getConfidence());
                     if (activity.getConfidence() >= 75) {
-                        sendMessageToActivity("RUNNING");
+                        sendMessageToActivity("RUNNING", DetectedActivity.RUNNING);
                     }
                     break;
                 }
                 case DetectedActivity.STILL: {
                     Log.e("ActivityRecogition", "Still: " + activity.getConfidence());
                     if (activity.getConfidence() >= 75) {
-                        sendMessageToActivity("STILL");
+                        sendMessageToActivity("STILL", DetectedActivity.STILL);
                     }
-                    break;
-                }
-                case DetectedActivity.TILTING: {
-                    Log.e("ActivityRecogition", "Tilting: " + activity.getConfidence());
                     break;
                 }
                 case DetectedActivity.WALKING: {
                     Log.e("ActivityRecogition", "Walking: " + activity.getConfidence());
                     if (activity.getConfidence() >= 75) {
-                        sendMessageToActivity("WALKING");
+                        sendMessageToActivity("WALKING", DetectedActivity.WALKING);
                     }
                     break;
                 }
                 case DetectedActivity.UNKNOWN: {
                     Log.e("ActivityRecogition", "Unknown: " + activity.getConfidence());
                     if (activity.getConfidence() >= 75) {
-                        sendMessageToActivity("UNKNOWN");
+                        sendMessageToActivity("UNKNOWN", DetectedActivity.UNKNOWN);
                     }
                     break;
                 }
@@ -100,11 +89,14 @@ public class ActivityRecognizedService extends IntentService {
         }
     }
 
-    private void sendMessageToActivity(String msg) {
+    private void sendMessageToActivity(String activity, int activityInt) {
         Intent intent = new Intent("ActivityRecognized");
         // You can also include some extra data.
-        intent.putExtra("Activity", msg);
+        intent.putExtra("Activity", activity);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+
+        // Request
+        Transactions.writeActivity(getApplicationContext(), activity, activityInt);
     }
 
 }

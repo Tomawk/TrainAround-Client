@@ -18,7 +18,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.wifi.aware.Characteristics;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -28,18 +27,14 @@ import android.os.Message;
 import android.os.ParcelUuid;
 import android.os.Process;
 import android.util.Log;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.example.mytestapplication.R;
 import com.example.mytestapplication.Transactions;
 
 import java.lang.reflect.Method;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,7 +54,7 @@ public class GATTClientService extends Service {
     public static UUID MOVEMENT_SERVICE = UUID.fromString("6b94f55a-dc3f-11ec-9d64-0242ac120002");
     public static UUID RECOGNIZED_ACTIVITY_CHARACTERISTIC = UUID.fromString("6b94f7e4-dc3f-11ec-9d64-0242ac120002");
     public static UUID SPEED_CHARACTERISTIC = UUID.fromString("6b94f92e-dc3f-11ec-9d64-0242ac120002");
-    public static UUID PEACE_CHARACTERISTIC = UUID.fromString("6b94fc58-dc3f-11ec-9d64-0242ac120002");
+    public static UUID PACE_CHARACTERISTIC = UUID.fromString("6b94fc58-dc3f-11ec-9d64-0242ac120002");
     public static UUID STEP_COUNTER_CHARACTERISTIC = UUID.fromString("6b94fd70-dc3f-11ec-9d64-0242ac120002");
 
     private static List<UUID> NEEDED_SERVICES = new ArrayList<UUID>(Arrays.asList(ATHLETE_INFORMATION_SERVICE, HEART_RATE_SERVICE, MOVEMENT_SERVICE));
@@ -121,6 +116,18 @@ public class GATTClientService extends Service {
                 case SPEED:
                     byte[] speedValue = intent.getByteArrayExtra(Transactions.DATA);
                     writeCharacteristic(MOVEMENT_SERVICE, SPEED_CHARACTERISTIC, speedValue);
+                    break;
+                case STEPS:
+                    byte[] stepsValue = intent.getByteArrayExtra(Transactions.DATA);
+                    writeCharacteristic(MOVEMENT_SERVICE, STEP_COUNTER_CHARACTERISTIC, stepsValue);
+                    break;
+                case ACTIVITY:
+                    byte[] athleteActivity = intent.getByteArrayExtra(Transactions.DATA);
+                    writeCharacteristic(MOVEMENT_SERVICE, RECOGNIZED_ACTIVITY_CHARACTERISTIC, athleteActivity);
+                    break;
+                case PACE:
+                    byte[] pace = intent.getByteArrayExtra(Transactions.DATA);
+                    writeCharacteristic(MOVEMENT_SERVICE, PACE_CHARACTERISTIC, pace);
                     break;
             }
         }
