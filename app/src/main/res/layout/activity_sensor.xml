@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/timer2_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#EFEFEF"
@@ -27,37 +28,50 @@
                 android:id="@+id/textView_activity"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Activity" />
+                android:text="Activity Recognized: (not working or loading)"
+                android:textColor="#000000" />
 
             <TextView
                 android:id="@+id/textView_accl"
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:text="Accelerometer" />
+                android:layout_height="63dp"
+                android:text="Accelerometer: (not working or loading)"
+                android:textColor="#000000" />
 
             <TextView
                 android:id="@+id/textView_gps"
                 android:layout_width="match_parent"
-                android:layout_height="36dp"
-                android:text="GPS" />
+                android:layout_height="55dp"
+                android:text="GPS: (not working or loading)"
+                android:textColor="#000000" />
 
             <TextView
                 android:id="@+id/textView_heart"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Heart" />
+                android:layout_height="36dp"
+                android:text="Heart Rate: (not working or loading)"
+                android:textColor="#000000" />
 
             <TextView
                 android:id="@+id/textView_steps"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Steps" />
+                android:text="Step counter: (not working or loading)"
+                android:textColor="#000000" />
 
             <TextView
                 android:id="@+id/distance_view"
                 android:layout_width="match_parent"
                 android:layout_height="44dp"
-                android:text="Distance" />
+                android:text="Distance: (not working or loading)"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/pace_view"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:text="Pace: (not working or loading)"
+                android:textColor="#000000" />
 
         </LinearLayout>
     </ScrollView>
@@ -69,6 +83,7 @@
         android:layout_marginTop="16dp"
         android:text="Timer"
         android:textAlignment="center"
+        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"

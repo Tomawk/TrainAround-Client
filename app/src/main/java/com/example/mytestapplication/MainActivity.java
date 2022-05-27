@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
     private Button start_scanning_btn;
     private ImageView settings_btn;
 
-
     private ActivityResultContracts.RequestMultiplePermissions multiplePermissionsContract;
     private ActivityResultLauncher<String[]> multiplePermissionLauncher;
 
@@ -69,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                     //TextView must be updated with the athlete name specified
+
                     updateAthleteTextView(Preferences.getAtheleteName());
 
                 }
@@ -170,12 +170,6 @@ public class MainActivity extends AppCompatActivity {
             start_scanning_btn.setEnabled(false);
         }
 
-        /*if(!SensorUtility.checkAndRequestPermissions(this)) {
-            Log.d(TAG,"Not all sensors permissions have been granted!");
-        } else {
-            Log.d(TAG,"Sensor permissions have been granted!");
-        }*/
-
         if(!BluetoothUtility.checkAndRequestBluetoothPermissions(this)) {
             Log.d(TAG,"Not all Bluetooth permissions have been granted!");
         } else {
@@ -233,8 +227,6 @@ public class MainActivity extends AppCompatActivity {
                             athleteName = data.getStringExtra("athleteName");
                             user_set = true;
                             Toast.makeText(getApplicationContext(),"Settings saved successfully!", Toast.LENGTH_SHORT).show();
-                            TextView athleteNameLabel = (TextView) findViewById(R.id.welcome_textview);
-                            athleteNameLabel.append(athleteName);
                         }
                     });
             //send an intent to Settings Activity

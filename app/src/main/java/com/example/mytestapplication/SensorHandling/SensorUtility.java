@@ -20,7 +20,7 @@ import java.util.List;
 public final class SensorUtility {
 
     static final String[] PERMISSIONS = {
-            //Manifest.permission.ACTIVITY_RECOGNITION, //TODO EMULATOR DOESN'T HAVE STEPCOUNTER SO MUST BE COMMENTED
+            Manifest.permission.ACTIVITY_RECOGNITION, //TODO EMULATOR DOESN'T HAVE STEPCOUNTER SO MUST BE COMMENTED
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.BODY_SENSORS

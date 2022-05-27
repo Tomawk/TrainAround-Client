@@ -18,7 +18,7 @@ import java.util.List;
 
 public class HeartRateHandling implements SensorEventListener {
 
-    private static final String TAG = "HeartBeat";
+    private static final String TAG = "HeartRate";
 
     private final SensorManager mSensorManager;
     private final Sensor mHeartMonitoring;
@@ -38,17 +38,15 @@ public class HeartRateHandling implements SensorEventListener {
 
     public void onResume(){
         //Registers a SensorEventListener for the given sensor at the given sampling frequency.
-        if(mSensorManager != null){
-            Log.d(TAG, "registerHeart: on");
-            mSensorManager.registerListener(this, mHeartMonitoring, SensorManager.SENSOR_DELAY_FASTEST);
-        }
+
+        Log.d(TAG, "registerHeart: on");
+        mSensorManager.registerListener(this, mHeartMonitoring, SensorManager.SENSOR_DELAY_FASTEST);
+
     }
 
     public void onPause(){
-        if(mSensorManager != null){
-            Log.d(TAG, "unregisterHeart: off");
-            mSensorManager.unregisterListener(this, mHeartMonitoring);
-        }
+        Log.d(TAG, "unregisterHeart: off");
+        mSensorManager.unregisterListener(this, mHeartMonitoring);
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {

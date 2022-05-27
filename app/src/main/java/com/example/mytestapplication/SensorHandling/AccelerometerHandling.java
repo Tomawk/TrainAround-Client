@@ -37,17 +37,13 @@ public class AccelerometerHandling implements SensorEventListener {
      */
 
     public void onResume(){
-        if(mSensorManager != null){
-            Log.d(TAG, "registerAccel: on");
-            mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        }
+        Log.d(TAG, "registerAccel: on");
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     public void onPause(){
-        if(mSensorManager != null){
-            Log.d(TAG, "unregisterAccel: off");
-            mSensorManager.unregisterListener(this, mAccelerometer);
-        }
+        Log.d(TAG, "unregisterAccel: off");
+        mSensorManager.unregisterListener(this, mAccelerometer);
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
