@@ -265,7 +265,7 @@ public class GATTClientService extends Service {
             };
 
     @SuppressLint("MissingPermission")
-    private void scanLeDevice() {
+    public void scanLeDevice() {
         if(bluetoothAdapter == null){
             Log.e(TAG, "Cannot start scanLeDevice since there is no bluetoothAdapter");
             return;
@@ -309,9 +309,24 @@ public class GATTClientService extends Service {
 
             scanning = true;
             bluetoothLeScanner.startScan(filters, settings, leScanCallback);
-        } else {
+            broadcastUpdate(GATT_UPDATE_TYPES.GATT_SERVER_SCANNING);
+        }else{
+            Log.w(TAG, "scanLeDevice: not going to start a new scan since there is already a pending scan...");
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    public void stopLeScanning(){
+        if(scanning){
+            Log.v(TAG, "stopping BLE scanning...");
+            if(bluetoothLeScanner == null){
+                Log.v(TAG, "the scanner obj was not initialized, cannot stopLeScanning");
+                return;
+            }
             scanning = false;
             bluetoothLeScanner.stopScan(leScanCallback);
+        }else{
+            Log.v(TAG, "received a call to stopLeScanning but the Service was not scanning!");
         }
     }
 
@@ -478,7 +493,8 @@ public class GATTClientService extends Service {
         GATT_SERVER_DISCOVERED,
         GATT_SERVER_CONNECTED,
         GATT_SERVER_DISCONNECTED,
-        GATT_SERVER_NOT_FOUND
+        GATT_SERVER_NOT_FOUND,
+        GATT_SERVER_SCANNING
     }
 
     public final static String GATT_UPDATES_ACTION = "gatt-updates";

@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button connect_btn;
     private Button start_activity_btn;
+    private Button start_scanning_btn;
     private ImageView settings_btn;
 
 
@@ -94,6 +95,16 @@ public class MainActivity extends AppCompatActivity {
                     bluetoothService.connect();
                 }
             });
+
+            start_scanning_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.v(TAG, "start_scanning btn pressed, prompting the GATTClientService to start another scan");
+                    bluetoothService.scanLeDevice();
+                    // disable the scan_btn while scan is in execution
+                    start_scanning_btn.setEnabled(false);
+                }
+            });
         }
 
         @Override
@@ -111,13 +122,14 @@ public class MainActivity extends AppCompatActivity {
 
             switch (update_type) {
                 case GATT_SERVER_CONNECTED:
-                    Button startActivityButton = (Button) findViewById(R.id.start_btn);
-                    startActivityButton.setEnabled(true);
+                    start_activity_btn.setEnabled(true);
                     Transactions.writeAthleteName(getApplicationContext(), athleteName);
                     break;
                 case GATT_SERVER_DISCOVERED:
-                    Button connectBtn = (Button) findViewById(R.id.connect_btn);
-                    connectBtn.setEnabled(true);
+                    start_scanning_btn.setEnabled(false);
+                    start_scanning_btn.setVisibility(View.GONE);
+                    connect_btn.setVisibility(View.VISIBLE);
+                    connect_btn.setEnabled(true);
                     break;
                 case GATT_SERVER_DISCONNECTED:
                     Log.i(TAG, "MainActivity: received message of disconnection from GATTServer");
@@ -125,7 +137,12 @@ public class MainActivity extends AppCompatActivity {
                 case GATT_SERVER_NOT_FOUND:
                     Log.i(TAG, "No app GATTServer found, should notify the user");
                     Toast.makeText(MainActivity.this, "No server found", Toast.LENGTH_LONG).show();
+                    start_scanning_btn.setEnabled(true);
+                    start_scanning_btn.setVisibility(View.VISIBLE);
                     break;
+                case GATT_SERVER_SCANNING:
+                    Log.v(TAG, "the GATTClientService is performing a scan for BLE GATTServer.. disable start_scanning_btn");
+                    start_scanning_btn.setEnabled(false);
             }
 
         }
@@ -140,14 +157,17 @@ public class MainActivity extends AppCompatActivity {
 
         connect_btn = (Button)findViewById(R.id.connect_btn);
         start_activity_btn = (Button)findViewById(R.id.start_btn);
+        start_scanning_btn = (Button) findViewById(R.id.start_scanning_btn);
         settings_btn = (ImageView) findViewById(R.id.settings_btn);
 
         if(TESTING_ENV_WITHOUT_BL_ACCESS == true){
             Log.w(TAG, "since this is a testing env without BL access, will enable start activity btn");
             start_activity_btn.setEnabled(true);
-            Log.w(TAG, "since this is a testing env without BL access, will hide connect btn");
-            connect_btn.setVisibility(View.INVISIBLE);
+            Log.w(TAG, "since this is a testing env without BL access, will hide connect and scan buttons");
+            connect_btn.setVisibility(View.GONE);
             connect_btn.setEnabled(false);
+            start_scanning_btn.setVisibility(View.GONE);
+            start_scanning_btn.setEnabled(false);
         }
 
         /*if(!SensorUtility.checkAndRequestPermissions(this)) {
