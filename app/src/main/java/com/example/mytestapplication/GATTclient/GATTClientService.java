@@ -37,6 +37,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.example.mytestapplication.R;
 import com.example.mytestapplication.Transactions;
 
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -167,7 +168,7 @@ public class GATTClientService extends Service {
                     // the suggested solution is to force cache evict
                     //
                     // I noticed that if I call gatt.discoverServices(); inside the callback onServiceChanged()
-                    // the device finds the "new" services
+                    // the device finds the "new" services, the problem is that onServiceChanged get fired rarely
 
                     for (UUID serviceUUID: NEEDED_SERVICES
                     ) {
@@ -175,11 +176,37 @@ public class GATTClientService extends Service {
                             Log.v(TAG, "the service " + serviceUUID + " was not found on the server");
                         }
                     }
-                    //Log.v(TAG, "going to make another services discovery call");
-                    //gatt.discoverServices();
+                    Log.i(TAG, "going to force refresh the available services");
+                    forceServiceDiscovery(gatt);
                 }
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
+            }
+        }
+
+        private int forcedDiscoveryCounter = 0;
+        private final int forcedDiscoveryThreshold = 1;
+        /**
+         * use this method to force the refresh of available services of a GATTServer
+         * @param gatt
+         */
+        @SuppressLint("MissingPermission")
+        private void forceServiceDiscovery(BluetoothGatt gatt){
+            if(forcedDiscoveryCounter == forcedDiscoveryThreshold){
+                Log.w(TAG, "will not force discovery again since already done " + forcedDiscoveryCounter + " times, threshold limit reached");
+                return;
+            }
+            try {
+                // BluetoothGatt gatt
+                final Method refresh = gatt.getClass().getMethod("refresh");
+                if (refresh != null) {
+                    refresh.invoke(gatt);
+                    gatt.discoverServices();
+                    forcedDiscoveryCounter++;
+                    Log.i(TAG, "Forced the refresh of the available services");
+                }
+            } catch (Exception e) {
+                Log.w(TAG, "an exception occurred trying to call gatt.refresh() hidden method : " + e.toString());
             }
         }
 
