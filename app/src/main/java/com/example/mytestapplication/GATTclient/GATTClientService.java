@@ -30,6 +30,7 @@ import android.os.Process;
 import android.util.Log;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -39,6 +40,7 @@ import com.example.mytestapplication.Transactions;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,6 +60,8 @@ public class GATTClientService extends Service {
     public static UUID SPEED_CHARACTERISTIC = UUID.fromString("6b94f92e-dc3f-11ec-9d64-0242ac120002");
     public static UUID PEACE_CHARACTERISTIC = UUID.fromString("6b94fc58-dc3f-11ec-9d64-0242ac120002");
     public static UUID STEP_COUNTER_CHARACTERISTIC = UUID.fromString("6b94fd70-dc3f-11ec-9d64-0242ac120002");
+
+    private static List<UUID> NEEDED_SERVICES = new ArrayList<UUID>(Arrays.asList(ATHLETE_INFORMATION_SERVICE, HEART_RATE_SERVICE, MOVEMENT_SERVICE));
 
     /* Scanning fields */
     private BluetoothDevice serverAddress;
@@ -134,14 +138,54 @@ public class GATTClientService extends Service {
             }
         }
 
+        @SuppressLint("MissingPermission")
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                Log.i(TAG, "onServicesDiscovered found new service!");
-                broadcastUpdate(GATT_UPDATE_TYPES.GATT_SERVER_CONNECTED);
+                Log.v(TAG, "onServicesDiscovered found new service!");
+                Log.v(TAG, "available services: " );
+
+                List<UUID> foundServicesUUIDs = new ArrayList<UUID>();
+                for (BluetoothGattService service : gatt.getServices()
+                     ) {
+                    Log.v(TAG, "service UUID: " + service.getUuid() + " | service.getType(): " + service.getType());
+                    foundServicesUUIDs.add(service.getUuid());
+                }
+                if(foundServicesUUIDs.containsAll(NEEDED_SERVICES)){
+                    Log.v(TAG, "all required services were found! | broadcasting new GATT state connected!");
+
+                    broadcastUpdate(GATT_UPDATE_TYPES.GATT_SERVER_CONNECTED);
+                }
+                else{
+                    Log.e(TAG, "not all required services were found...");
+                    //this happens because of a caching strategy of anroid BLE library implementation
+                    // https://issuetracker.google.com/issues/37012916
+                    // https://stackoverflow.com/questions/50739085/how-to-refresh-services-clear-cache
+                    // the suggested solution is to force cache evict
+                    //
+                    // I noticed that if I call gatt.discoverServices(); inside the callback onServiceChanged()
+                    // the device finds the "new" services
+
+                    for (UUID serviceUUID: NEEDED_SERVICES
+                    ) {
+                        if( ! foundServicesUUIDs.contains(serviceUUID)){
+                            Log.v(TAG, "the service " + serviceUUID + " was not found on the server");
+                        }
+                    }
+                    //Log.v(TAG, "going to make another services discovery call");
+                    //gatt.discoverServices();
+                }
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
             }
+        }
+
+        @SuppressLint("MissingPermission")
+        @Override
+        public void onServiceChanged(@NonNull BluetoothGatt gatt) {
+            super.onServiceChanged(gatt);
+            Log.v(TAG, "received a call to onServiceChanged: should re-discover the services with gatt.discoverServices()");
+            gatt.discoverServices();
         }
     };
 
