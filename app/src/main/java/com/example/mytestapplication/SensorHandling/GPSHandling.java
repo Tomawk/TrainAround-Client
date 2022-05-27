@@ -64,6 +64,9 @@ public class GPSHandling {
                         float speed = location.getSpeed();
                         boolean hasSpeed = location.hasSpeed();
                         printLocation(latitude,longitude,speed,hasSpeed);
+                        if(hasSpeed){
+                            Transactions.writeSpeed(context, speed);
+                        }
                     }
                 }
             }

@@ -8,6 +8,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.example.mytestapplication.GATTclient.GATTClientService;
 
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 public class Transactions {
@@ -19,7 +20,9 @@ public class Transactions {
     public enum TRANSACTION_TYPE {
         NAME,
         HEART_RATE,
-        SPEED
+        SPEED,
+        STEPS,
+        PACE
     }
 
     public static void writeAthleteName(Context context, String athleteName){
@@ -33,9 +36,10 @@ public class Transactions {
         return;
     }
 
-    public static void writeSpeed(Context context, int speed) {
-        BigInteger bigInt = BigInteger.valueOf(speed);
-        broadcastMessage(context, TRANSACTION_TYPE.SPEED,bigInt.toByteArray());
+    public static void writeSpeed(Context context, double speed) {
+        double speedRounded = Math.round(speed * 100.0) / 100.0;
+        byte[] speedBytes = ByteBuffer.allocate(8).putDouble(speedRounded).array();
+        broadcastMessage(context, TRANSACTION_TYPE.SPEED, speedBytes);
         return;
     }
 
