@@ -86,8 +86,11 @@ public class GATTClientService extends Service {
         @Override
         public void handleMessage(Message msg) {
             // we insert here the functionalities executed by the thread
-            initialize();
-            scanLeDevice();
+            if( initialize() == true) {
+                scanLeDevice();
+            }else{
+                Log.w(TAG, "could not initialize GATTClient");
+            }
             Log.d(TAG, "handleMessage on thread: " + Process.getThreadPriority(Process.myTid()));
         }
     }
@@ -236,6 +239,10 @@ public class GATTClientService extends Service {
 
     @SuppressLint("MissingPermission")
     private void scanLeDevice() {
+        if(bluetoothAdapter == null){
+            Log.e(TAG, "Cannot start scanLeDevice since there is no bluetoothAdapter");
+            return;
+        }
         bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
 
         /*if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
@@ -263,6 +270,12 @@ public class GATTClientService extends Service {
                         Log.v(TAG, "stopping BL scan because of timeout");
                         scanning = false;
                         bluetoothLeScanner.stopScan(leScanCallback);
+                        if( isConnectedToGATTServer() ){
+                            Log.v(TAG, "no more actions needed since I am already connected to a GATTserver");
+                        }else{
+                            Log.w(TAG, "scan terminated and no GATT server found, broadcasting new STATUS GATT_SERVER_NOT_FOUND");
+                            broadcastUpdate(GATT_UPDATE_TYPES.GATT_SERVER_NOT_FOUND);
+                        }
                     }
                 }
             }, SCAN_PERIOD);
@@ -327,10 +340,25 @@ public class GATTClientService extends Service {
     }
 
     /**
+     * use this to check if the GATTClient is connected to BLE GATT server
+     * @return
+     */
+    private boolean isConnectedToGATTServer(){
+        if(bluetoothGatt == null){
+            return false;
+        }
+        return true;
+    }
+
+    /**
      *
      */
     @SuppressLint("MissingPermission")
     public void discoverServices(){
+        if( isConnectedToGATTServer() == false){
+            Log.w(TAG, "cannot discoverServices since I am not connected to a GATTServer");
+            return;
+        }
         bluetoothGatt.discoverServices();
         return;
     }
@@ -422,7 +450,8 @@ public class GATTClientService extends Service {
     public enum GATT_UPDATE_TYPES{
         GATT_SERVER_DISCOVERED,
         GATT_SERVER_CONNECTED,
-        GATT_SERVER_DISCONNECTED
+        GATT_SERVER_DISCONNECTED,
+        GATT_SERVER_NOT_FOUND
     }
 
     public final static String GATT_UPDATES_ACTION = "gatt-updates";

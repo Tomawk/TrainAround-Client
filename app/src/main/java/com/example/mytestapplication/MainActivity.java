@@ -45,10 +45,18 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+
+    // set this field to true if you want to test the app in the emulator
+    private static final boolean TESTING_ENV_WITHOUT_BL_ACCESS = false;
+
     private boolean user_set = false;
     private String athleteName;
     private ActivityResultLauncher<Intent> someActivityResultLauncher;
     private Preferences myPreferences;
+
+    private Button connect_btn;
+    private Button start_activity_btn;
+    private ImageView settings_btn;
 
 
     private ActivityResultContracts.RequestMultiplePermissions multiplePermissionsContract;
@@ -79,8 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     finish();
             }
 
-            Button button = (Button)findViewById(R.id.connect_btn);
-            button.setOnClickListener(new View.OnClickListener(){
+            connect_btn.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View view) {
                     Log.d(TAG, "Going to connect...");
@@ -113,6 +120,11 @@ public class MainActivity extends AppCompatActivity {
                     connectBtn.setEnabled(true);
                     break;
                 case GATT_SERVER_DISCONNECTED:
+                    Log.i(TAG, "MainActivity: received message of disconnection from GATTServer");
+                    break;
+                case GATT_SERVER_NOT_FOUND:
+                    Log.i(TAG, "No app GATTServer found, should notify the user");
+                    Toast.makeText(MainActivity.this, "No server found", Toast.LENGTH_LONG).show();
                     break;
             }
 
@@ -123,6 +135,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_main);
+
+        connect_btn = (Button)findViewById(R.id.connect_btn);
+        start_activity_btn = (Button)findViewById(R.id.start_btn);
+        settings_btn = (ImageView) findViewById(R.id.settings_btn);
+
+        if(TESTING_ENV_WITHOUT_BL_ACCESS == true){
+            Log.w(TAG, "since this is a testing env without BL access, will enable start activity btn");
+            start_activity_btn.setEnabled(true);
+            Log.w(TAG, "since this is a testing env without BL access, will hide connect btn");
+            connect_btn.setVisibility(View.INVISIBLE);
+            connect_btn.setEnabled(false);
+        }
 
         /*if(!SensorUtility.checkAndRequestPermissions(this)) {
             Log.d(TAG,"Not all sensors permissions have been granted!");
@@ -149,13 +175,10 @@ public class MainActivity extends AppCompatActivity {
 
         SensorUtility.askPermissions(multiplePermissionLauncher,this);
 
-        setContentView(R.layout.activity_main);
-
         /* GATTClient service is bound with the main activity */
         Intent gattServiceIntent = new Intent(this, GATTClientService.class);
         boolean bound = bindService(gattServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-        Button start_activity_btn = (Button)findViewById(R.id.start_btn);
         start_activity_btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -164,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ImageView settings_btn = (ImageView) findViewById(R.id.settings_btn);
         settings_btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
