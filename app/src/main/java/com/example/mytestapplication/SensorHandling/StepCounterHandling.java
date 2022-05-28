@@ -38,12 +38,12 @@ public class StepCounterHandling implements SensorEventListener {
 
     public void onResume(){
         //Registers a SensorEventListener for the given sensor at the given sampling frequency.
-        Log.d(TAG, "registerSteps: on");
+        Log.i(TAG, "StepCounter sensor enabled!");
         mSensorManager.registerListener(this, mStepCounter, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     public void onPause(){
-        Log.d(TAG, "unregisterSteps: off");
+        Log.i(TAG, "StepCounter sensor disabled!");
         mSensorManager.unregisterListener(this, mStepCounter);
     }
 
