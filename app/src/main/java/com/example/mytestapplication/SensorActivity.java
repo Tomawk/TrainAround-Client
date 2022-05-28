@@ -259,6 +259,7 @@ public class SensorActivity extends Activity {
 
     @Override
     public void onDestroy(){
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
     }
 }
