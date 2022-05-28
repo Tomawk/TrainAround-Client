@@ -277,10 +277,7 @@ public class GATTClientService extends Service {
                     Log.d(TAG, "Available device: " + result);
                     //Log.d(TAG, "scanRecord.getServiceUuids(): " + result.getScanRecord().getServiceUuids());
                     if(useAsServer(result)){
-                        if(scanning){
-                            bluetoothLeScanner.stopScan(leScanCallback);
-                            scanning = false;
-                        }
+                        stopLeScanning();
                     }
                 }
 
@@ -350,10 +347,10 @@ public class GATTClientService extends Service {
                 return;
             }
             scanning = false;
-            bluetoothLeScanner.stopScan(leScanCallback);
         }else{
             Log.v(TAG, "received a call to stopLeScanning but the Service was not scanning!");
         }
+        bluetoothLeScanner.stopScan(leScanCallback);
     }
 
     /**
@@ -596,9 +593,8 @@ public class GATTClientService extends Service {
 
         Log.d(TAG, "onDestroy has been called, going to stop BLE Scan and service thread");
 
-        if(scanning){
-            bluetoothLeScanner.stopScan(leScanCallback);
-        }
+        stopLeScanning();
+
         if(bluetoothGatt != null){
             Log.v(TAG, "Disconnecting from server");
             bluetoothGatt.close();
@@ -607,6 +603,7 @@ public class GATTClientService extends Service {
 
         thread.quit();
         super.onDestroy();
+        Log.v(TAG, "onDestroy method completed");
     }
 
     public enum GATT_UPDATE_TYPES{
