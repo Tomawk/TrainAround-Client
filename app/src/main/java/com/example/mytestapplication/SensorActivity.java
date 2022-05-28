@@ -113,6 +113,7 @@ public class SensorActivity extends Activity {
         stopStepCounter();
         stopHeartRate();
         disableGPSLocations();
+
     }
 
     private void runTimer()
@@ -287,5 +288,6 @@ public class SensorActivity extends Activity {
     @Override
     public void onDestroy(){
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
     }
 }
