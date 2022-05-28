@@ -34,7 +34,8 @@ public class SensorActivity extends Activity {
     private StepCounterHandling stepCounterHandling;
     private HeartRateHandling heartRateHandling;
     private boolean locationUpdating = false;
-    private boolean sensorsUpdating = false;
+    private boolean stepCounterUpdating = false;
+    private boolean heartRateUpdating = false;
     private boolean activityUpdating = false;
     private int seconds = 0;
 
@@ -49,10 +50,10 @@ public class SensorActivity extends Activity {
             String message = intent.getStringExtra("Activity");
             if(message.equals("STILL")){
                 disableGPSLocations();
-                stopAllSensors();
+                stopStepCounter();
             } else{
                 enableGPSLocations();
-                enableAllSensors();
+                enableStepCounter();
             }
             TextView textView_activity = (TextView) findViewById(R.id.textView_activity);
             textView_activity.setText("Activity Recognized: " + message);
@@ -100,7 +101,8 @@ public class SensorActivity extends Activity {
     public void onResume(){
         super.onResume();
         enableActivityRecognition();
-        enableAllSensors();
+        enableStepCounter();
+        enableHeartRate();
         enableGPSLocations();
     }
 
@@ -108,7 +110,8 @@ public class SensorActivity extends Activity {
         super.onPause();
         //TODO: IN QUESTO MODO I SENSORI VENGONO STOPPATI E NON VANNO IN BACKGROUND
         stopActivityRecognition();
-        stopAllSensors();
+        stopStepCounter();
+        stopHeartRate();
         disableGPSLocations();
     }
 
@@ -199,39 +202,56 @@ public class SensorActivity extends Activity {
     }
 
     //When the user is STILL all unnecessary sensors should be stopped
-    public void stopAllSensors(){
-        if(sensorsUpdating == true){
+    public void stopStepCounter(){
+        if(stepCounterUpdating == true){
             stepCounterHandling.onPause();
-            heartRateHandling.onPause();
-            TextView textView_heart = (TextView) findViewById(R.id.textView_heart);
-            textView_heart.setText("Heart Rate sensor is currently stopped to save battery");
-            textView_heart.setTextColor(Color.RED);
             TextView textView_steps = (TextView) findViewById(R.id.textView_steps);
             textView_steps.append(" (Currently Stopped)");
             textView_steps.setTextColor(Color.RED);
-            sensorsUpdating = false;
-            Log.i("SensorActivity", "HeartRate and StepCounter sensors stopped!");
+            stepCounterUpdating = false;
+            Log.i("SensorActivity", "StepCounter sensor stopped!");
         } else{
-            Log.w("SensorActivity", "HeartRate and StepCounter sensors already stopped!");
+            Log.w("SensorActivity", "StepCounter sensor already stopped!");
         }
     }
 
-    public void enableAllSensors(){
-        if(sensorsUpdating == false){
+    public void enableStepCounter(){
+        if(stepCounterUpdating == false){
             stepCounterHandling.onResume();
+            TextView textView_steps = (TextView) findViewById(R.id.textView_steps);
+            textView_steps.setText("Step counter: (not working or loading)");
+            textView_steps.setTextColor(Color.BLACK);
+            stepCounterUpdating = true;
+            Log.i("SensorActivity", "StepCounter sensor enabled!");
+        } else{
+            Log.w("SensorActivity", "StepCounter sensor already enabled!");
+        }
+    }
+
+    public void stopHeartRate(){
+        if(heartRateUpdating == true){
+            heartRateHandling.onPause();
+            TextView textView_steps = (TextView) findViewById(R.id.textView_heart);
+            textView_steps.setText("HeartRate sensor is currently stopped to save battery");
+            textView_steps.setTextColor(Color.RED);
+            heartRateUpdating = false;
+            Log.i("SensorActivity", "HeartRate sensor stopped!");
+        } else{
+            Log.w("SensorActivity", "HeartRate sensor already stopped!");
+        }
+    }
+
+    public void enableHeartRate(){
+        if(heartRateUpdating == false){
             heartRateHandling.onResume();
             TextView textView_heart = (TextView) findViewById(R.id.textView_heart);
             textView_heart.setText("Heart Rate: (not working or loading)");
             textView_heart.setTextColor(Color.BLACK);
-            TextView textView_steps = (TextView) findViewById(R.id.textView_steps);
-            textView_steps.setText("Step counter: (not working or loading)");
-            textView_steps.setTextColor(Color.BLACK);
-            sensorsUpdating = true;
-            Log.i("SensorActivity", "HeartRate and StepCounter sensors enabled!");
+            heartRateUpdating = true;
+            Log.i("SensorActivity", "HeartRate sensor enabled!");
         } else{
-            Log.w("SensorActivity", "HeartRate and StepCounter sensors already enabled!");
+            Log.w("SensorActivity", "HeartRate sensor already enabled!");
         }
-
     }
 
     public void stopActivityRecognition(){

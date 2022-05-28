@@ -20,10 +20,10 @@ import java.util.List;
 public final class SensorUtility {
 
     static final String[] PERMISSIONS = {
-            Manifest.permission.ACTIVITY_RECOGNITION, //TODO: IF YOU ARE RUNNING ON EMULATOR YOU SHOULD COMMENT IT CAUSE IT DOENST HAVE STEPCOUNTER
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.BODY_SENSORS,
+            Manifest.permission.BODY_SENSORS
+            //Manifest.permission.ACTIVITY_RECOGNITION,
             //Manifest.permission.BLUETOOTH_SCAN,
             //Manifest.permission.BLUETOOTH_CONNECT
     };
