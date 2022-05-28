@@ -1,11 +1,7 @@
 package com.example.mytestapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.text.HtmlCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -13,17 +9,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.Html;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.example.mytestapplication.SensorHandling.AccelerometerHandling;
 import com.example.mytestapplication.SensorHandling.GPSHandling;
 import com.example.mytestapplication.SensorHandling.HeartRateHandling;
 import com.example.mytestapplication.SensorHandling.SensorUtility;
@@ -38,13 +31,13 @@ public class SensorActivity extends Activity {
 
     private FusedLocationProviderClient fusedLocationClient;
     private GPSHandling gpsHandling;
-    private AccelerometerHandling accelerometerHandling;
     private StepCounterHandling stepCounterHandling;
     private HeartRateHandling heartRateHandling;
     private boolean locationUpdating = false;
-    private boolean sensorsUpdating = true;
+    private boolean stepCounterUpdating = false;
+    private boolean heartRateUpdating = false;
+    private boolean activityUpdating = false;
     private int seconds = 0;
-    private double pace = 0;
 
     //TODO CHANGE NAME
     private Intent intent;
@@ -57,10 +50,10 @@ public class SensorActivity extends Activity {
             String message = intent.getStringExtra("Activity");
             if(message.equals("STILL")){
                 disableGPSLocations();
-                stopAllSensors();
+                stopStepCounter();
             } else{
                 enableGPSLocations();
-                enableAllSensors();
+                enableStepCounter();
             }
             TextView textView_activity = (TextView) findViewById(R.id.textView_activity);
             textView_activity.setText("Activity Recognized: " + message);
@@ -90,12 +83,12 @@ public class SensorActivity extends Activity {
         intent = new Intent( this, ActivityRecognizedService.class );
         pendingIntent = PendingIntent.getService( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
         ActivityRecognition.getClient(this).requestActivityUpdates(0, pendingIntent);
+        activityUpdating = true;
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mMessageReceiver, new IntentFilter("ActivityRecognized"));
 
         //Sensor classes instantiations
-        accelerometerHandling = new AccelerometerHandling(sensorManager, this);
         stepCounterHandling = new StepCounterHandling(sensorManager, this);
         heartRateHandling = new HeartRateHandling(sensorManager,this);
 
@@ -108,7 +101,8 @@ public class SensorActivity extends Activity {
     public void onResume(){
         super.onResume();
         enableActivityRecognition();
-        enableAllSensors();
+        enableStepCounter();
+        enableHeartRate();
         enableGPSLocations();
     }
 
@@ -116,8 +110,10 @@ public class SensorActivity extends Activity {
         super.onPause();
         //TODO: IN QUESTO MODO I SENSORI VENGONO STOPPATI E NON VANNO IN BACKGROUND
         stopActivityRecognition();
-        stopAllSensors();
+        stopStepCounter();
+        stopHeartRate();
         disableGPSLocations();
+
     }
 
     private void runTimer()
@@ -180,8 +176,9 @@ public class SensorActivity extends Activity {
             textView_pace.setTextColor(Color.BLACK);
             fusedLocationClient.requestLocationUpdates(gpsHandling.getLocationRequest(),gpsHandling.getLocationCallback(), Looper.getMainLooper());
             locationUpdating = true;
+            Log.i("SensorActivity","GPS correctly enabled!");
         } else{
-            Log.e("SensorActivity","GPS already enabled!");
+            Log.w("SensorActivity","GPS already enabled!");
         }
     }
 
@@ -199,67 +196,99 @@ public class SensorActivity extends Activity {
             TextView textView_pace = (TextView) findViewById(R.id.pace_view);
             textView_pace.append(" (Currently stopped)");
             textView_pace.setTextColor(Color.RED);
+            Log.i("SensorActivity","GPS correctly disabled!");
         } else{
-            Log.e("SensorActivity","GPS already disabled!");
+            Log.w("SensorActivity","GPS already disabled!");
         }
     }
 
     //When the user is STILL all unnecessary sensors should be stopped
-    public void stopAllSensors(){
-        if(sensorsUpdating == true){
-            accelerometerHandling.onPause();
+    public void stopStepCounter(){
+        if(stepCounterUpdating == true){
             stepCounterHandling.onPause();
-            heartRateHandling.onPause();
-            TextView textView_accl = (TextView) findViewById(R.id.textView_accl);
-            textView_accl.setText("Accelerator sensor is currently stopped to save battery");
-            textView_accl.setTextColor(Color.RED);
-            TextView textView_heart = (TextView) findViewById(R.id.textView_heart);
-            textView_heart.setText("Heart Rate sensor is currently stopped to save battery");
-            textView_heart.setTextColor(Color.RED);
             TextView textView_steps = (TextView) findViewById(R.id.textView_steps);
             textView_steps.append(" (Currently Stopped)");
             textView_steps.setTextColor(Color.RED);
-            sensorsUpdating = false;
+            stepCounterUpdating = false;
+            Log.i("SensorActivity", "StepCounter sensor stopped!");
         } else{
-            Log.e("SensorActivity", "Sensors already stopped");
+            Log.w("SensorActivity", "StepCounter sensor already stopped!");
         }
     }
 
-    public void enableAllSensors(){
-        accelerometerHandling.onResume();
-        stepCounterHandling.onResume();
-        heartRateHandling.onResume();
-        TextView textView_accl = (TextView) findViewById(R.id.textView_accl);
-        textView_accl.setText("Accelerometer: (not working or loading)");
-        textView_accl.setTextColor(Color.BLACK);
-        TextView textView_heart = (TextView) findViewById(R.id.textView_heart);
-        textView_heart.setText("Heart Rate: (not working or loading)");
-        textView_heart.setTextColor(Color.BLACK);
-        TextView textView_steps = (TextView) findViewById(R.id.textView_steps);
-        textView_steps.setText("Step counter: (not working or loading)");
-        textView_steps.setTextColor(Color.BLACK);
-        sensorsUpdating = true;
+    public void enableStepCounter(){
+        if(stepCounterUpdating == false){
+            stepCounterHandling.onResume();
+            TextView textView_steps = (TextView) findViewById(R.id.textView_steps);
+            textView_steps.setText("Step counter: (not working or loading)");
+            textView_steps.setTextColor(Color.BLACK);
+            stepCounterUpdating = true;
+            Log.i("SensorActivity", "StepCounter sensor enabled!");
+        } else{
+            Log.w("SensorActivity", "StepCounter sensor already enabled!");
+        }
+    }
+
+    public void stopHeartRate(){
+        if(heartRateUpdating == true){
+            heartRateHandling.onPause();
+            TextView textView_steps = (TextView) findViewById(R.id.textView_heart);
+            textView_steps.setText("HeartRate sensor is currently stopped to save battery");
+            textView_steps.setTextColor(Color.RED);
+            heartRateUpdating = false;
+            Log.i("SensorActivity", "HeartRate sensor stopped!");
+        } else{
+            Log.w("SensorActivity", "HeartRate sensor already stopped!");
+        }
+    }
+
+    public void enableHeartRate(){
+        if(heartRateUpdating == false){
+            heartRateHandling.onResume();
+            TextView textView_heart = (TextView) findViewById(R.id.textView_heart);
+            textView_heart.setText("Heart Rate: (not working or loading)");
+            textView_heart.setTextColor(Color.BLACK);
+            heartRateUpdating = true;
+            Log.i("SensorActivity", "HeartRate sensor enabled!");
+        } else{
+            Log.w("SensorActivity", "HeartRate sensor already enabled!");
+        }
     }
 
     public void stopActivityRecognition(){
-        ActivityRecognition.getClient(this).removeActivityUpdates(pendingIntent);
-        TextView textView_activity = (TextView) findViewById(R.id.textView_activity);
-        textView_activity.setText("Activity Recognition is currently stopped to save battery");
-        textView_activity.setTextColor(Color.RED);
-        Log.e("SensorActivity", "Activity Recognition stopped!");
+        if(activityUpdating == true){
+            ActivityRecognition.getClient(this).removeActivityUpdates(pendingIntent);
+            TextView textView_activity = (TextView) findViewById(R.id.textView_activity);
+            textView_activity.setText("Activity Recognition is currently stopped to save battery");
+            textView_activity.setTextColor(Color.RED);
+            Log.i("SensorActivity", "Activity Recognition stopped!");
+            activityUpdating = false;
+        } else {
+            Log.w("SensorActivity", "Activity Recognition already stopped!");
+        }
+
     }
 
     public void enableActivityRecognition(){
-        ActivityRecognition.getClient(this).requestActivityUpdates(0,pendingIntent);
-        TextView textView_activity = (TextView) findViewById(R.id.textView_activity);
-        textView_activity.setText("Activity Recognized: (not working or loading)");
-        textView_activity.setTextColor(Color.BLACK);
-        Log.e("SensorActivity", "Activity Recognition enabled!");
+        if(activityUpdating == false){
+            intent = new Intent( this, ActivityRecognizedService.class );
+            pendingIntent = PendingIntent.getService( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
+            ActivityRecognition.getClient(this).requestActivityUpdates(0,pendingIntent);
+            TextView textView_activity = (TextView) findViewById(R.id.textView_activity);
+            textView_activity.setText("Activity Recognized: (not working or loading)");
+            textView_activity.setTextColor(Color.BLACK);
+            activityUpdating = true;
+            Log.i("SensorActivity", "Activity Recognition enabled!");
+        } else{
+            Log.w("SensorActivity", "Activity Recognition already enabled!");
+        }
+
     }
 
     @Override
     public void onDestroy(){
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
     }
 }

@@ -39,13 +39,13 @@ public class HeartRateHandling implements SensorEventListener {
     public void onResume(){
         //Registers a SensorEventListener for the given sensor at the given sampling frequency.
 
-        Log.d(TAG, "registerHeart: on");
+        Log.i(TAG, "HeartRate sensor enabled!");
         mSensorManager.registerListener(this, mHeartMonitoring, SensorManager.SENSOR_DELAY_FASTEST);
 
     }
 
     public void onPause(){
-        Log.d(TAG, "unregisterHeart: off");
+        Log.i(TAG, "HeartRate sensor disabled!");
         mSensorManager.unregisterListener(this, mHeartMonitoring);
     }
 

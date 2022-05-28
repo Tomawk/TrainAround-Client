@@ -1,20 +1,15 @@
 package com.example.mytestapplication;
 
 import android.app.Activity;
-import android.app.PendingIntent;
-import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.hardware.SensorManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,22 +20,11 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.mytestapplication.Others.Preferences;
-import com.example.mytestapplication.GATTclient.BluetoothUtility;
 import com.example.mytestapplication.GATTclient.GATTClientService;
-import com.example.mytestapplication.SensorHandling.AccelerometerHandling;
-import com.example.mytestapplication.SensorHandling.GPSHandling;
-import com.example.mytestapplication.SensorHandling.HeartRateHandling;
 import com.example.mytestapplication.SensorHandling.SensorUtility;
-
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -176,11 +160,6 @@ public class MainActivity extends AppCompatActivity {
             start_scanning_btn.setEnabled(false);
         }
 
-        if(!BluetoothUtility.checkAndRequestBluetoothPermissions(this)) {
-            Log.d(TAG,"Not all Bluetooth permissions have been granted!");
-        } else {
-            Log.d(TAG,"Bluetooth permissions have been granted!");
-        }
         myPreferences = Preferences.getPreferences(this);
         myPreferences.registerOnSharedPreferenceChangeListener(sharedPrefListener); // register for changes on preferences
 
