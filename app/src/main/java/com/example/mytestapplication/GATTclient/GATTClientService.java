@@ -146,6 +146,7 @@ public class GATTClientService extends Service {
                 // disconnected from the GATT Server
                 Log.d(TAG, "Disconnected from the GATT Server");
                 broadcastUpdate(GATT_UPDATE_TYPES.GATT_SERVER_DISCONNECTED);
+                tryToConnect();
             }else{
                 Log.v(TAG, "gatt: " + gatt + " | status: " + status + " | newState: " + newState);
             }
@@ -412,6 +413,7 @@ public class GATTClientService extends Service {
         if(bluetoothGatt != null){
             Log.v(TAG, "Disconnecting from server");
             bluetoothGatt.close();
+            broadcastUpdate(GATT_UPDATE_TYPES.GATT_SERVER_DISCONNECTED);
             bluetoothGatt = null;
             return true;
         }

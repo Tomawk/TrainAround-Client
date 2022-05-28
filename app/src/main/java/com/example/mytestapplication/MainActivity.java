@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private Preferences myPreferences;
 
     private Button connect_btn;
+    private Button disconnect_btn;
     private Button start_activity_btn;
     private Button start_scanning_btn;
     private ImageView settings_btn;
@@ -80,6 +81,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            disconnect_btn.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    Log.d(TAG, "Going to disconnect...");
+                    bluetoothService.closeGATTConnection();
+                }
+            });
+
             start_scanning_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -110,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
                     Transactions.writeAthleteName(getApplicationContext(), athleteName);
                     Toast.makeText(getApplicationContext(), "connected to server", Toast.LENGTH_LONG).show();
                     connect_btn.setVisibility(View.GONE);
+                    disconnect_btn.setVisibility(View.VISIBLE);
                     break;
                 case GATT_SERVER_DISCOVERED:
                     start_scanning_btn.setEnabled(false);
@@ -120,8 +130,10 @@ public class MainActivity extends AppCompatActivity {
                 case GATT_SERVER_DISCONNECTED:
                     Log.i(TAG, "MainActivity: received message of disconnection from GATTServer");
                     Toast.makeText(getApplicationContext(), "Disconnected from server, will retry to connect", Toast.LENGTH_LONG).show();
-                    bluetoothService.tryToConnect();
-                    connect_btn.setVisibility(View.VISIBLE);
+                    start_activity_btn.setEnabled(false);
+                    start_scanning_btn.setVisibility(View.VISIBLE);
+                    start_scanning_btn.setEnabled(true);
+                    disconnect_btn.setVisibility(View.GONE);
                     break;
                 case GATT_SERVER_NOT_FOUND:
                     Log.i(TAG, "No app GATTServer found, should notify the user");
@@ -146,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         connect_btn = (Button)findViewById(R.id.connect_btn);
+        disconnect_btn = (Button)findViewById(R.id.disconnect_btn);
         start_activity_btn = (Button)findViewById(R.id.start_btn);
         start_scanning_btn = (Button) findViewById(R.id.start_scanning_btn);
         settings_btn = (ImageView) findViewById(R.id.settings_btn);
