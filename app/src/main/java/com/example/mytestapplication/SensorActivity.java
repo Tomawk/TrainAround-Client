@@ -44,6 +44,7 @@ public class SensorActivity extends Activity {
     private boolean heartRateUpdating = false;
     private boolean activityUpdating = false;
     private int seconds = 0;
+    private String currentActivity = "";
 
     //TODO CHANGE NAME
     private Intent intent;
@@ -54,6 +55,7 @@ public class SensorActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
             String message = intent.getStringExtra("Activity");
+            currentActivity = message;
             if(message.equals("STILL")){
                 disableGPSLocations();
                 stopStepCounter();
@@ -110,24 +112,18 @@ public class SensorActivity extends Activity {
         runTimer();
     }
 
-
-
     public void onResume(){
         super.onResume();
-        enableActivityRecognition();
-        enableStepCounter();
+        if (!currentActivity.equals("STILL")){
+            enableStepCounter();
+            enableGPSLocations();
+        }
         enableHeartRate();
-        enableGPSLocations();
+        enableActivityRecognition();
     }
 
     public void onPause(){
         super.onPause();
-        //TODO: IN QUESTO MODO I SENSORI VENGONO STOPPATI E NON VANNO IN BACKGROUND
-        stopActivityRecognition();
-        stopStepCounter();
-        stopHeartRate();
-        disableGPSLocations();
-
     }
 
     private void runTimer()
@@ -219,7 +215,7 @@ public class SensorActivity extends Activity {
     //When the user is STILL all unnecessary sensors should be stopped
     public void stopStepCounter(){
         if(stepCounterUpdating == true){
-            stepCounterHandling.onPause();
+            stepCounterHandling.stopSensor();
             TextView textView_steps = (TextView) findViewById(R.id.textView_steps);
             textView_steps.append(" (Currently Stopped)");
             textView_steps.setTextColor(Color.RED);
@@ -232,7 +228,7 @@ public class SensorActivity extends Activity {
 
     public void enableStepCounter(){
         if(stepCounterUpdating == false){
-            stepCounterHandling.onResume();
+            stepCounterHandling.enableSensor();
             TextView textView_steps = (TextView) findViewById(R.id.textView_steps);
             textView_steps.setText("Step counter: (not working or loading)");
             textView_steps.setTextColor(Color.BLACK);
@@ -245,7 +241,7 @@ public class SensorActivity extends Activity {
 
     public void stopHeartRate(){
         if(heartRateUpdating == true){
-            heartRateHandling.onPause();
+            heartRateHandling.stopSensor();
             TextView textView_steps = (TextView) findViewById(R.id.textView_heart);
             textView_steps.setText("HeartRate sensor is currently stopped to save battery");
             textView_steps.setTextColor(Color.RED);
@@ -258,7 +254,7 @@ public class SensorActivity extends Activity {
 
     public void enableHeartRate(){
         if(heartRateUpdating == false){
-            heartRateHandling.onResume();
+            heartRateHandling.enableSensor();
             TextView textView_heart = (TextView) findViewById(R.id.textView_heart);
             textView_heart.setText("Heart Rate: (not working or loading)");
             textView_heart.setTextColor(Color.BLACK);
@@ -304,6 +300,10 @@ public class SensorActivity extends Activity {
 
     @Override
     public void onDestroy(){
+        stopActivityRecognition();
+        stopStepCounter();
+        stopHeartRate();
+        disableGPSLocations();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
     }

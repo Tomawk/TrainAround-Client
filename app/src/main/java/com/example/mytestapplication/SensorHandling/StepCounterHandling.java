@@ -37,14 +37,11 @@ public class StepCounterHandling implements SensorEventListener {
      */
 
     public void onResume(){
-        //Registers a SensorEventListener for the given sensor at the given sampling frequency.
-        Log.i(TAG, "StepCounter sensor enabled!");
-        mSensorManager.registerListener(this, mStepCounter, SensorManager.SENSOR_DELAY_FASTEST);
+
     }
 
     public void onPause(){
-        Log.i(TAG, "StepCounter sensor disabled!");
-        mSensorManager.unregisterListener(this, mStepCounter);
+
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -59,6 +56,17 @@ public class StepCounterHandling implements SensorEventListener {
             printStepValues(new_steps);
             Transactions.writeSteps(context.getApplicationContext(), new_steps);
         }
+    }
+
+    public void stopSensor(){
+        Log.i(TAG, "StepCounter sensor disabled!");
+        mSensorManager.unregisterListener(this, mStepCounter);
+    }
+
+    public void enableSensor(){
+        //Registers a SensorEventListener for the given sensor at the given sampling frequency.
+        Log.i(TAG, "StepCounter sensor enabled!");
+        mSensorManager.registerListener(this, mStepCounter, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     public void printStepValues(float new_steps){
