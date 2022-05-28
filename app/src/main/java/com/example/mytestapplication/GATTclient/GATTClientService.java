@@ -89,7 +89,7 @@ public class GATTClientService extends Service {
             }else{
                 Log.w(TAG, "could not initialize GATTClient");
             }
-            Log.d(TAG, "handleMessage on thread: " + Process.getThreadPriority(Process.myTid()));
+            Log.d(TAG, "handleMessage on thread: " + Process.myTid());
         }
     }
 
@@ -601,7 +601,12 @@ public class GATTClientService extends Service {
             bluetoothGatt = null;
         }
 
+        serviceLooper.quit();
+        serviceHandler.removeCallbacksAndMessages(null);
         thread.quit();
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(transactionReceiver);
+
         super.onDestroy();
         Log.v(TAG, "onDestroy method completed");
     }
