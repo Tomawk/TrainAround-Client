@@ -404,6 +404,20 @@ public class GATTClientService extends Service {
         return true;
     }
 
+    /**
+     * closes the GATT connection to the server if any
+     */
+    @SuppressLint("MissingPermission")
+    public boolean closeGATTConnection(){
+        if(bluetoothGatt != null){
+            Log.v(TAG, "Disconnecting from server");
+            bluetoothGatt.close();
+            bluetoothGatt = null;
+            return true;
+        }
+        return false;
+    }
+
     public static int DEFAULT_RETRY_CONNECTION_HOW_MANY_TIMES = 2;
     private static int DEFAULT_RETRY_CONNECTION_PERIOD = 3; //in seconds
     private int executionTimesCounter = 0;
@@ -595,11 +609,7 @@ public class GATTClientService extends Service {
 
         stopLeScanning();
 
-        if(bluetoothGatt != null){
-            Log.v(TAG, "Disconnecting from server");
-            bluetoothGatt.close();
-            bluetoothGatt = null;
-        }
+        closeGATTConnection();
 
         serviceLooper.quit();
         serviceHandler.removeCallbacksAndMessages(null);
