@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
+import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
@@ -59,8 +60,9 @@ public class GATTClientService extends Service {
 
     private static List<UUID> NEEDED_SERVICES = new ArrayList<UUID>(Arrays.asList(ATHLETE_INFORMATION_SERVICE, HEART_RATE_SERVICE, MOVEMENT_SERVICE));
 
+    private BluetoothManager bluetoothManager;
     /* Scanning fields */
-    private BluetoothDevice serverAddress;
+    private BluetoothDevice serverDevice;
     private BluetoothLeScanner bluetoothLeScanner;
     private boolean scanning;
     private Handler handler = new Handler();
@@ -228,7 +230,19 @@ public class GATTClientService extends Service {
 
     @Override
     public void onCreate(){
+        LocalBroadcastManager.getInstance(this).registerReceiver(transactionReceiver,
+                new IntentFilter(Transactions.TRANSACTION_ACTION));
 
+        thread = new HandlerThread("ServiceStartArguments",
+                Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
+
+        // Get the HandlerThread's Looper and use it for our Handler
+        serviceLooper = thread.getLooper();
+        serviceHandler = new ServiceHandler(serviceLooper);
+
+        Message msg = serviceHandler.obtainMessage();
+        serviceHandler.sendMessage(msg);
     }
 
     public boolean initialize() {
@@ -238,6 +252,11 @@ public class GATTClientService extends Service {
             return false;
         } else {
             Log.d(TAG, "BluetoothAdapter successfully obtained.");
+        }
+        bluetoothManager = (BluetoothManager) getApplicationContext().getSystemService(Context.BLUETOOTH_SERVICE);
+        if(bluetoothManager == null){
+            Log.e(TAG, "initialize: unable to obtain a bluetoothManager");
+            return false;
         }
         return true;
     }
@@ -252,7 +271,7 @@ public class GATTClientService extends Service {
                 @Override
                 public void onScanResult(int callbackType, ScanResult result) {
                     super.onScanResult(callbackType, result);
-                    serverAddress = result.getDevice();
+                    serverDevice = result.getDevice();
 
                     // debug logging to understand found devices
                     Log.d(TAG, "Available device: " + result);
@@ -352,7 +371,7 @@ public class GATTClientService extends Service {
             return false;
         }
         Log.i(TAG, "going to use the device '" + device + "' as server");
-        this.serverAddress = device;
+        this.serverDevice = device;
         broadcastUpdate(GATT_UPDATE_TYPES.GATT_SERVER_DISCOVERED);
 
         return true;
@@ -364,7 +383,7 @@ public class GATTClientService extends Service {
      */
     @SuppressLint("MissingPermission")
     public boolean connect() {
-        if (bluetoothAdapter == null || serverAddress == null) {
+        if (bluetoothAdapter == null || serverDevice == null) {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
             return false;
         }
@@ -372,7 +391,7 @@ public class GATTClientService extends Service {
         final BluetoothDevice device;
 
         try {
-            device = bluetoothAdapter.getRemoteDevice(serverAddress.toString());
+            device = bluetoothAdapter.getRemoteDevice(serverDevice.toString());
         } catch (IllegalArgumentException exception) {
             Log.w(TAG, "Device not found with provided address.");
             return false;
@@ -388,6 +407,97 @@ public class GATTClientService extends Service {
         return true;
     }
 
+    public static int DEFAULT_RETRY_CONNECTION_HOW_MANY_TIMES = 2;
+    private static int DEFAULT_RETRY_CONNECTION_PERIOD = 3; //in seconds
+    private int executionTimesCounter = 0;
+    private int howManyTimes = DEFAULT_RETRY_CONNECTION_HOW_MANY_TIMES;
+
+    private Handler retryConnectionHandler = new android.os.Handler();
+
+    private boolean isRetryConnectionHandlerRunning = false;
+
+    private Runnable retryConnectionTaskRunnable = new Runnable() {
+        public void run() {
+            if(executionTimesCounter > howManyTimes){
+                Log.v(TAG, "exceeded execution times threshold, stopping retryConnectionHandler");
+                stopRetryConnectionHandler();
+                return;
+            }
+            Log.v(TAG, "retryConnectionTask: going to retry connection...");
+            if(isConnectedToGATTServer()){
+                Log.i(TAG, "retryConnectionTask: I am already connected to a GATTServer, will not perform the connection and will stop");
+                stopRetryConnectionHandler();
+                return;
+            }
+            boolean ret = connect();
+            executionTimesCounter++;
+            Log.d(TAG, "retryConnectionTask: executed " + executionTimesCounter + " times | the connect() returned " + ret);
+
+            retryConnectionHandler.postDelayed(retryConnectionTaskRunnable, DEFAULT_RETRY_CONNECTION_PERIOD * 1000);
+        }
+    };
+
+    void startRetryConnectionHandler() {
+        if(isRetryConnectionHandlerRunning == true){
+            Log.w(TAG, "retryConnectionHandler is already running, not going to start it again!");
+            return;
+        }
+        retryConnectionHandler.postDelayed(retryConnectionTaskRunnable, DEFAULT_RETRY_CONNECTION_PERIOD * 1000 );
+        isRetryConnectionHandlerRunning = true;
+    }
+
+    void stopRetryConnectionHandler() {
+        if(isRetryConnectionHandlerRunning == false){
+            Log.w(TAG, "stopRetryConnectionHandler the handler is not running, not going to stop it");
+            return;
+        }
+        retryConnectionHandler.removeCallbacks(retryConnectionTaskRunnable);
+        isRetryConnectionHandlerRunning = false;
+        if(isConnectedToGATTServer()) {
+            Log.v(TAG, "stopRetryConnectionHandler: since the client is currently connected, going to reset the retry counter");
+            executionTimesCounter = 0;
+        }
+    }
+    /**
+     * call this method to try to connect a given number of times
+     * every DEFAULT_RETRY_CONNECTION_PERIOD seconds
+     * @param howManyTimes it should try to connect to the discovered GATTServer
+     */
+    public void tryToConnect(int howManyTimes){
+
+        if(isConnectedToGATTServer()){
+            Log.v(TAG, "I am already connected to a GATTServer");
+            return;
+        }
+
+        if(isRetryConnectionHandlerRunning){
+            Log.i(TAG, "tryToConnect: the retryConnectionHandler is already running, not going to start it again");
+            return;
+        }
+
+        if(howManyTimes <= 0){
+            howManyTimes = DEFAULT_RETRY_CONNECTION_HOW_MANY_TIMES;
+            Log.w(TAG, "howManyTimes should be a positive integer, using default " + DEFAULT_RETRY_CONNECTION_HOW_MANY_TIMES);
+        }
+
+        this.howManyTimes = howManyTimes;
+
+        if(executionTimesCounter > this.howManyTimes){
+            Log.v(TAG, "executionTimesCounter " + executionTimesCounter + " is > " + this.howManyTimes + " will not start the retry again ");
+            return;
+        }
+
+        startRetryConnectionHandler();
+    }
+
+    /**
+     * call this method to try to connect a DEFAULT_RETRY_CONNECTION_HOW_MANY_TIMES number of times
+     * every DEFAULT_RETRY_CONNECTION_PERIOD seconds
+     */
+    public void tryToConnect(){
+        tryToConnect(DEFAULT_RETRY_CONNECTION_HOW_MANY_TIMES);
+    }
+
     /**
      * use this to check if the GATTClient is connected to BLE GATT server
      * @return
@@ -396,7 +506,24 @@ public class GATTClientService extends Service {
         if(bluetoothGatt == null){
             return false;
         }
-        return true;
+        //int connection_state = bluetoothGatt.getConnectionState(serverDevice); not working anymore
+        @SuppressLint("MissingPermission")
+        int connection_state = bluetoothManager.getConnectionState(serverDevice, BluetoothProfile.GATT);
+        switch (connection_state){
+            case BluetoothGatt.STATE_DISCONNECTED:
+                return false;
+            case BluetoothGatt.STATE_CONNECTED:
+                return true;
+            case BluetoothGatt.STATE_CONNECTING:
+                Log.v(TAG, "isConnectedToGATTServer: current state is STATE_CONNECTING | assumed true");
+                return true;
+            case BluetoothGatt.STATE_DISCONNECTING:
+                Log.v(TAG, "isConnectedToGATTServer: current state is STATE_DISCONNECTING | assumed false");
+                return false;
+            default:
+                Log.v(TAG, "isConnectedToGATTServer: unrecognised current state " + connection_state + " | assumed false");
+                return false;
+        }
     }
 
     /**
@@ -448,20 +575,6 @@ public class GATTClientService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "GATTclient binding");
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(transactionReceiver,
-                new IntentFilter(Transactions.TRANSACTION_ACTION));
-
-        thread = new HandlerThread("ServiceStartArguments",
-                Process.THREAD_PRIORITY_BACKGROUND);
-        thread.start();
-
-        // Get the HandlerThread's Looper and use it for our Handler
-        serviceLooper = thread.getLooper();
-        serviceHandler = new ServiceHandler(serviceLooper);
-
-        Message msg = serviceHandler.obtainMessage();
-        serviceHandler.sendMessage(msg);
 
         return binder;
     }

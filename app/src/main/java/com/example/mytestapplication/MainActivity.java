@@ -124,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
                 case GATT_SERVER_CONNECTED:
                     start_activity_btn.setEnabled(true);
                     Transactions.writeAthleteName(getApplicationContext(), athleteName);
+                    Toast.makeText(getApplicationContext(), "connected to server", Toast.LENGTH_LONG).show();
+                    connect_btn.setVisibility(View.GONE);
                     break;
                 case GATT_SERVER_DISCOVERED:
                     start_scanning_btn.setEnabled(false);
@@ -133,6 +135,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case GATT_SERVER_DISCONNECTED:
                     Log.i(TAG, "MainActivity: received message of disconnection from GATTServer");
+                    Toast.makeText(getApplicationContext(), "Disconnected from server, will retry to connect", Toast.LENGTH_LONG).show();
+                    bluetoothService.tryToConnect();
+                    connect_btn.setVisibility(View.VISIBLE);
                     break;
                 case GATT_SERVER_NOT_FOUND:
                     Log.i(TAG, "No app GATTServer found, should notify the user");
@@ -143,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 case GATT_SERVER_SCANNING:
                     Log.v(TAG, "the GATTClientService is performing a scan for BLE GATTServer.. disable start_scanning_btn");
                     start_scanning_btn.setEnabled(false);
+                    break;
             }
 
         }
