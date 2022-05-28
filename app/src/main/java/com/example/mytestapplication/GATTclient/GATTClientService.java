@@ -89,7 +89,7 @@ public class GATTClientService extends Service {
             }else{
                 Log.w(TAG, "could not initialize GATTClient");
             }
-            Log.d(TAG, "handleMessage on thread: " + Process.getThreadPriority(Process.myTid()));
+            Log.d(TAG, "handleMessage on thread: " + Process.myTid());
         }
     }
 
@@ -277,10 +277,7 @@ public class GATTClientService extends Service {
                     Log.d(TAG, "Available device: " + result);
                     //Log.d(TAG, "scanRecord.getServiceUuids(): " + result.getScanRecord().getServiceUuids());
                     if(useAsServer(result)){
-                        if(scanning){
-                            bluetoothLeScanner.stopScan(leScanCallback);
-                            scanning = false;
-                        }
+                        stopLeScanning();
                     }
                 }
 
@@ -350,10 +347,10 @@ public class GATTClientService extends Service {
                 return;
             }
             scanning = false;
-            bluetoothLeScanner.stopScan(leScanCallback);
         }else{
             Log.v(TAG, "received a call to stopLeScanning but the Service was not scanning!");
         }
+        bluetoothLeScanner.stopScan(leScanCallback);
     }
 
     /**
@@ -405,6 +402,20 @@ public class GATTClientService extends Service {
         //Log.d(TAG, "bluetoothGatt.discoverServices(): " + bluetoothGatt.discoverServices());
         //Log.d(TAG, "bluetoothGatt.getServices(): " + bluetoothGatt.getServices().toString());
         return true;
+    }
+
+    /**
+     * closes the GATT connection to the server if any
+     */
+    @SuppressLint("MissingPermission")
+    public boolean closeGATTConnection(){
+        if(bluetoothGatt != null){
+            Log.v(TAG, "Disconnecting from server");
+            bluetoothGatt.close();
+            bluetoothGatt = null;
+            return true;
+        }
+        return false;
     }
 
     public static int DEFAULT_RETRY_CONNECTION_HOW_MANY_TIMES = 2;
@@ -596,17 +607,18 @@ public class GATTClientService extends Service {
 
         Log.d(TAG, "onDestroy has been called, going to stop BLE Scan and service thread");
 
-        if(scanning){
-            bluetoothLeScanner.stopScan(leScanCallback);
-        }
-        if(bluetoothGatt != null){
-            Log.v(TAG, "Disconnecting from server");
-            bluetoothGatt.close();
-            bluetoothGatt = null;
-        }
+        stopLeScanning();
 
+        closeGATTConnection();
+
+        serviceLooper.quit();
+        serviceHandler.removeCallbacksAndMessages(null);
         thread.quit();
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(transactionReceiver);
+
         super.onDestroy();
+        Log.v(TAG, "onDestroy method completed");
     }
 
     public enum GATT_UPDATE_TYPES{

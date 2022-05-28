@@ -248,6 +248,7 @@ public class MainActivity extends AppCompatActivity {
         //this.stopService(new Intent(getApplicationContext(), GATTClientService.class));
         //bluetoothService.stopService();
         //bluetoothService = null;
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(clientReceiver);
         unbindService(serviceConnection);
         super.onDestroy();
     }
