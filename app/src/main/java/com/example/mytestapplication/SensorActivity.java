@@ -34,7 +34,7 @@ public class SensorActivity extends Activity {
     private StepCounterHandling stepCounterHandling;
     private HeartRateHandling heartRateHandling;
     private boolean locationUpdating = false;
-    private boolean sensorsUpdating = true;
+    private boolean sensorsUpdating = false;
     private boolean activityUpdating = false;
     private int seconds = 0;
 
@@ -90,7 +90,6 @@ public class SensorActivity extends Activity {
         //Sensor classes instantiations
         stepCounterHandling = new StepCounterHandling(sensorManager, this);
         heartRateHandling = new HeartRateHandling(sensorManager,this);
-        sensorsUpdating = true;
 
         //Timer
         runTimer();
