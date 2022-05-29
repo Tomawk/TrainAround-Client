@@ -30,12 +30,6 @@ public class HeartRateHandling implements SensorEventListener {
         mHeartMonitoring = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
     }
 
-    /*
-    As a best practice for using sensors, it is recommended to unregister the listener
-    when the sketch's activity is paused to reduce battery usage, and then registering
-    it again when the activity resumes.
-     */
-
     public void onResume(){
         //Registers a SensorEventListener for the given sensor at the given sampling frequency.
     }
@@ -48,7 +42,6 @@ public class HeartRateHandling implements SensorEventListener {
     }
 
     public void onSensorChanged(SensorEvent event) {
-        // Here we call a method in MainActivity and pass it the values from the SensorChanged event
         Transactions.writeHeartRate(context, (int) event.values[0]);
         printHeartMonitoring(event.values);
 

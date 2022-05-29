@@ -126,16 +126,9 @@ public class GPSHandling {
     public void runTimer()
     {
 
-        // Get the text view.
-         //TextView timeView = (TextView) ((Activity)context).findViewById(R.id.timer2_view);
-
-        // Creates a new Handler
         final Handler handler
                 = new Handler();
 
-        // Call the post() method, passing in a new Runnable.
-        // The post() method processes code without a delay,
-        // so the code in the Runnable will run almost immediately.
         handler.post(new Runnable() {
             @Override
 
@@ -152,12 +145,8 @@ public class GPSHandling {
                                 "%d:%02d:%02d", hours,
                                 minutes, secs);
 
-                // Set the text view text
-                //timeView.setText("Timer: " + time);
-                //timeView.setTextColor(Color.BLACK);
 
-                // If running is true, increment the seconds variable
-                if (true) { //TODO ADD A WAY TO STOP THE TIMER (?)
+                if (true) {
                     seconds++;
                 }
 

@@ -213,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(clientReceiver,
                 new IntentFilter(GATTClientService.GATT_UPDATES_ACTION));
+
         //firstly checks whether the athlete name has already been set
         athleteName = Preferences.getAtheleteName();
 

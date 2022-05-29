@@ -10,9 +10,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-
-// TODO: AL MOMENTO E' INUTILE MA POTREBBE SERVIRCI, NEL CASO LA ELIMINIAMO
-
 public final class Utility {
 
     public static String readFromFile(Context context, String fileName) {
