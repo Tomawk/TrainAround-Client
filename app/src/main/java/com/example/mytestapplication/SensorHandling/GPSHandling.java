@@ -78,6 +78,7 @@ public class GPSHandling {
                         boolean hasSpeed = location.hasSpeed();
                         printLocation(latitude,longitude,speed,hasSpeed);
                         printDistance();
+                        Transactions.writeDistance(context, totalDistance);
                         if(hasSpeed){
                             Transactions.writeSpeed(context, speed);
                         }

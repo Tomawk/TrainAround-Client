@@ -23,7 +23,8 @@ public class Transactions {
         SPEED,
         STEPS,
         ACTIVITY,
-        PACE
+        PACE,
+        DISTANCE
     }
 
     public static void writeAthleteName(Context context, String athleteName){
@@ -60,6 +61,13 @@ public class Transactions {
         double paceRounded = Math.round(pace * 10.0) / 10.0;
         byte[] paceBytes = ByteBuffer.allocate(8).putDouble(paceRounded).array();
         broadcastMessage(context, TRANSACTION_TYPE.PACE, paceBytes);
+        return;
+    }
+
+    public static void writeDistance(Context context, double distance){
+        double distanceRounded = Math.round(distance * 10.0) / 10.0;
+        byte[] distanceBytes = ByteBuffer.allocate(8).putDouble(distanceRounded).array();
+        broadcastMessage(context, TRANSACTION_TYPE.DISTANCE, distanceBytes);
         return;
     }
 
