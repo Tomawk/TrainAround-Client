@@ -126,6 +126,7 @@ public class SensorActivity extends Activity {
             //enableStepCounter();
             enableGPSLocations();
         }
+        enableStepCounter();
         enableHeartRate();
         enableActivityRecognition();
     }
@@ -318,6 +319,7 @@ public class SensorActivity extends Activity {
         stopHeartRate();
         disableGPSLocations();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        stepCounterHandling.onDestroy();
         super.onDestroy();
     }
 }

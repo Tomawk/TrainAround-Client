@@ -64,6 +64,10 @@ public class StepCounterHandling implements SensorEventListener {
 
     }
 
+    public void onDestroy(){
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver);
+    }
+
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
