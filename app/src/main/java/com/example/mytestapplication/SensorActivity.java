@@ -11,10 +11,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.hardware.SensorManager;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.mytestapplication.SensorHandling.GPSHandling;
@@ -24,10 +27,13 @@ import com.example.mytestapplication.SensorHandling.StepCounterHandling;
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.Locale;
 
 public class SensorActivity extends Activity {
+
+    private static final String TAG = SensorActivity.class.getSimpleName();
 
     private FusedLocationProviderClient fusedLocationClient;
     private GPSHandling gpsHandling;
@@ -80,7 +86,7 @@ public class SensorActivity extends Activity {
 
         //Display all the available sensors on the current tested device, debug purpose
         String available_sensor_list = SensorUtility.getSensorList(sensorManager);
-        Log.d("SensorUtility",available_sensor_list);
+        Log.d(TAG,available_sensor_list);
 
         intent = new Intent( this, ActivityRecognizedService.class );
         pendingIntent = PendingIntent.getService( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
@@ -93,6 +99,14 @@ public class SensorActivity extends Activity {
         //Sensor classes instantiations
         stepCounterHandling = new StepCounterHandling(sensorManager, this);
         heartRateHandling = new HeartRateHandling(sensorManager,this);
+
+        View stop_activity_btn = findViewById(R.id.stop_activity_btn);
+        stop_activity_btn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                stopSensorActivity();
+            }
+        });
 
         //Timer
         runTimer();
@@ -174,7 +188,7 @@ public class SensorActivity extends Activity {
             locationUpdating = true;
             Log.i("SensorActivity","GPS correctly enabled!");
         } else{
-            Log.w("SensorActivity","GPS already enabled!");
+            Log.w(TAG,"GPS already enabled!");
         }
     }
 
@@ -194,7 +208,7 @@ public class SensorActivity extends Activity {
             textView_pace.setTextColor(Color.RED);
             Log.i("SensorActivity","GPS correctly disabled!");
         } else{
-            Log.w("SensorActivity","GPS already disabled!");
+            Log.w(TAG,"GPS already disabled!");
         }
     }
 
@@ -208,7 +222,7 @@ public class SensorActivity extends Activity {
             stepCounterUpdating = false;
             Log.i("SensorActivity", "StepCounter sensor stopped!");
         } else{
-            Log.w("SensorActivity", "StepCounter sensor already stopped!");
+            Log.w(TAG, "StepCounter sensor already stopped!");
         }
     }
 
@@ -257,12 +271,11 @@ public class SensorActivity extends Activity {
             TextView textView_activity = (TextView) findViewById(R.id.textView_activity);
             textView_activity.setText("Activity Recognition is currently stopped to save battery");
             textView_activity.setTextColor(Color.RED);
-            Log.i("SensorActivity", "Activity Recognition stopped!");
+            Log.i(TAG, "Activity Recognition stopped!");
             activityUpdating = false;
         } else {
             Log.w("SensorActivity", "Activity Recognition already stopped!");
         }
-
     }
 
     public void enableActivityRecognition(){
@@ -278,7 +291,11 @@ public class SensorActivity extends Activity {
         } else{
             Log.w("SensorActivity", "Activity Recognition already enabled!");
         }
+    }
 
+    public void stopSensorActivity(){
+        Log.d(TAG, "Stopping sensors monitoring activity ...");
+        finish();
     }
 
     @Override
