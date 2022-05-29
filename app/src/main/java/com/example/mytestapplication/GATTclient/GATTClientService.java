@@ -57,6 +57,7 @@ public class GATTClientService extends Service {
     public static UUID SPEED_CHARACTERISTIC = UUID.fromString("6b94f92e-dc3f-11ec-9d64-0242ac120002");
     public static UUID PACE_CHARACTERISTIC = UUID.fromString("6b94fc58-dc3f-11ec-9d64-0242ac120002");
     public static UUID STEP_COUNTER_CHARACTERISTIC = UUID.fromString("6b94fd70-dc3f-11ec-9d64-0242ac120002");
+    public static UUID DISTANCE_CHARACTERISTIC = UUID.fromString("7e6a3f63-d1d2-4779-aae4-33d8b942de7f");
 
     private static List<UUID> NEEDED_SERVICES = new ArrayList<UUID>(Arrays.asList(ATHLETE_INFORMATION_SERVICE, HEART_RATE_SERVICE, MOVEMENT_SERVICE));
 
@@ -131,6 +132,9 @@ public class GATTClientService extends Service {
                     byte[] pace = intent.getByteArrayExtra(Transactions.DATA);
                     writeCharacteristic(MOVEMENT_SERVICE, PACE_CHARACTERISTIC, pace);
                     break;
+                case DISTANCE:
+                    byte[] distance = intent.getByteArrayExtra(Transactions.DATA);
+                    writeCharacteristic(MOVEMENT_SERVICE, DISTANCE_CHARACTERISTIC, distance);
             }
         }
     };
@@ -166,7 +170,7 @@ public class GATTClientService extends Service {
                 }
                 if(foundServicesUUIDs.containsAll(NEEDED_SERVICES)){
                     Log.v(TAG, "all required services were found! | broadcasting new GATT state connected!");
-
+                    forcedDiscoveryCounter = 0; // reset the forced discovery counter field
                     broadcastUpdate(GATT_UPDATE_TYPES.GATT_SERVER_CONNECTED);
                 }
                 else{
@@ -203,6 +207,13 @@ public class GATTClientService extends Service {
         private void forceServiceDiscovery(BluetoothGatt gatt){
             if(forcedDiscoveryCounter == forcedDiscoveryThreshold){
                 Log.w(TAG, "will not force discovery again since already done " + forcedDiscoveryCounter + " times, threshold limit reached");
+                Log.w(TAG, "going to disconnect from the current GATTServer, since not all the services are available");
+                boolean ret = closeGATTConnection();
+                if(ret == true){
+                    Log.i(TAG, "successfully closed GATT connection on server with missing required services");
+                }else{
+                    Log.w(TAG, "cannot close GATT connection with server with missing required services");
+                }
                 return;
             }
             try {
