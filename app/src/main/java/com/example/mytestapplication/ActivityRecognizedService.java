@@ -52,28 +52,28 @@ public class ActivityRecognizedService extends IntentService {
                 }*/
                 case DetectedActivity.ON_BICYCLE: {
                     Log.e("ActivityRecogition", "On Bicycle: " + activity.getConfidence());
-                    if (activity.getConfidence() >= 75) {
+                    if (activity.getConfidence() >= 50) {
                         sendMessageToActivity("ON_BICYCLE", DetectedActivity.ON_BICYCLE);
                     }
                     break;
                 }
                 case DetectedActivity.RUNNING: {
                     Log.e("ActivityRecogition", "Running: " + activity.getConfidence());
-                    if (activity.getConfidence() >= 75) {
+                    if (activity.getConfidence() >= 50) {
                         sendMessageToActivity("RUNNING", DetectedActivity.RUNNING);
                     }
                     break;
                 }
                 case DetectedActivity.STILL: {
                     Log.e("ActivityRecogition", "Still: " + activity.getConfidence());
-                    if (activity.getConfidence() >= 75) {
+                    if (activity.getConfidence() >= 50) {
                         sendMessageToActivity("STILL", DetectedActivity.STILL);
                     }
                     break;
                 }
                 case DetectedActivity.WALKING: {
                     Log.e("ActivityRecogition", "Walking: " + activity.getConfidence());
-                    if (activity.getConfidence() >= 75) {
+                    if (activity.getConfidence() >= 50) {
                         sendMessageToActivity("WALKING", DetectedActivity.WALKING);
                     }
                     break;
