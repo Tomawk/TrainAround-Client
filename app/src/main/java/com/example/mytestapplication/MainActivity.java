@@ -181,7 +181,11 @@ public class MainActivity extends AppCompatActivity {
             Log.d("PERMISSIONS", "Launcher result: " + isGranted.toString());
             if (isGranted.containsValue(false)) {
                 Log.d("PERMISSIONS", "At least one of the permissions was not granted, launching again...");
-                multiplePermissionLauncher.launch(SensorUtility.getPERMISSIONS());
+                if (SensorUtility.getSdkVersion() >= 29){
+                    multiplePermissionLauncher.launch(SensorUtility.getPERMISSIONS_OVER_SDK29());
+                } else{
+                    multiplePermissionLauncher.launch(SensorUtility.getPERMISSIONS_UNDER_SDK29());
+                }
             }
         });
 

@@ -31,6 +31,7 @@ public class StepCounterHandling implements SensorEventListener {
     private float initialSteps = 0;
     private float stepsAtm = 0;
     private float stepsAtStill = 0;
+
 /*
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override

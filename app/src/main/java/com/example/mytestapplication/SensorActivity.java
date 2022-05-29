@@ -59,12 +59,15 @@ public class SensorActivity extends Activity {
             }else{
                 // Get extra data included in the Intent
                 String message = intent.getStringExtra("Activity");
-                if(message.equals("STILL") && !currentActivity.equals("STILL")){
+                if(message.equals("STILL") && !currentActivity.equals("STILL")){ //previous activity is not still and detected one is still
                     stepCounterHandling.setStepsAtStill();
                     disableGPSLocations();
-                } else{
-                    enableGPSLocations();
+                } else if(message.equals("STILL") && currentActivity.equals("STILL")){  //not a transition
+                    //nothing must be done here
+                } else { //previous activity is still and
+                    enableGPSLocations(); //previous activity is not still and detected one is still
                 }
+
                 currentActivity = message;
                 TextView textView_activity = (TextView) findViewById(R.id.textView_activity);
                 textView_activity.setText("Activity Recognized: " + message);

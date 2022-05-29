@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -19,13 +20,19 @@ import java.util.List;
 
 public final class SensorUtility {
 
-    static final String[] PERMISSIONS = {
+    static final int sdkVersion = Build.VERSION.SDK_INT;
+
+    static final String[] PERMISSIONS_UNDER_SDK29 = {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.BODY_SENSORS
-            //Manifest.permission.ACTIVITY_RECOGNITION,
-            //Manifest.permission.BLUETOOTH_SCAN,
-            //Manifest.permission.BLUETOOTH_CONNECT
+    };
+
+    static final String[] PERMISSIONS_OVER_SDK29 = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.BODY_SENSORS,
+            Manifest.permission.ACTIVITY_RECOGNITION
     };
 
 
@@ -44,12 +51,24 @@ public final class SensorUtility {
     }
 
     public static void askPermissions(ActivityResultLauncher<String[]> multiplePermissionLauncher, Context ctx) {
-        if (!hasPermissions(PERMISSIONS,ctx)) {
-            Log.d("PERMISSIONS", "Launching multiple contract permission launcher for ALL required permissions");
-            multiplePermissionLauncher.launch(PERMISSIONS);
-        } else {
-            Log.d("PERMISSIONS", "All permissions are already granted");
+        if(sdkVersion >= 29){
+            if (!hasPermissions(PERMISSIONS_OVER_SDK29,ctx)) {
+                Log.d("PERMISSIONS", "Launching multiple contract permission launcher for ALL required permissions");
+
+                multiplePermissionLauncher.launch(PERMISSIONS_OVER_SDK29);
+            } else {
+                Log.d("PERMISSIONS", "All permissions are already granted");
+            }
+        } else { //sdkVersion <= 28
+            if (!hasPermissions(PERMISSIONS_UNDER_SDK29,ctx)) {
+                Log.d("PERMISSIONS", "Launching multiple contract permission launcher for ALL required permissions");
+
+                multiplePermissionLauncher.launch(PERMISSIONS_UNDER_SDK29);
+            } else {
+                Log.d("PERMISSIONS", "All permissions are already granted");
+            }
         }
+
     }
 
     public static String getSensorList(SensorManager sm){
@@ -61,8 +80,18 @@ public final class SensorUtility {
         return ret_str;
     }
 
-    public static String[] getPERMISSIONS() {
-        return PERMISSIONS;
+    public static String[] getPERMISSIONS_UNDER_SDK29() {
+        return PERMISSIONS_UNDER_SDK29;
     }
+
+    public static String[] getPERMISSIONS_OVER_SDK29() {
+        return PERMISSIONS_OVER_SDK29;
+    }
+
+    public static int getSdkVersion() {
+        return sdkVersion;
+    }
+
+
 
 }
