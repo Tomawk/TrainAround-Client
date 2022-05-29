@@ -51,12 +51,6 @@ public class StepCounterHandling implements SensorEventListener {
 
     }
 
-    /*
-    As a best practice for using sensors, it is recommended to unregister the listener
-    when the sketch's activity is paused to reduce battery usage, and then registering
-    it again when the activity resumes.
-     */
-
     public void onResume(){
 
     }

@@ -46,7 +46,7 @@ public class SensorActivity extends Activity {
     private int seconds = 0;
     private String currentActivity = "";
 
-    //TODO CHANGE NAME
+
     private Intent intent;
     private PendingIntent pendingIntent;
 
@@ -88,7 +88,6 @@ public class SensorActivity extends Activity {
         fusedLocationClient.requestLocationUpdates(gpsHandling.getLocationRequest(),gpsHandling.getLocationCallback(), Looper.getMainLooper());
         locationUpdating = true;
 
-        //TODO: Non sono sicuro se basti un sensor manager unico o se servano piu sensor manager per ogni sensore (DA VEDERE)
         SensorManager sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 
         //Display all the available sensors on the current tested device, debug purpose
@@ -174,7 +173,7 @@ public class SensorActivity extends Activity {
                 timeView.setTextColor(Color.BLACK);
 
                 // If running is true, increment the seconds variable
-                if (true) { //TODO ADD A WAY TO STOP THE TIMER (?)
+                if (true) {
                     seconds++;
                 }
 
