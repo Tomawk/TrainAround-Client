@@ -212,6 +212,7 @@ public class GATTClientService extends Service {
                 boolean ret = closeGATTConnection();
                 if(ret == true){
                     Log.i(TAG, "successfully closed GATT connection on server with missing required services");
+                    forcedDiscoveryCounter = 0; //
                 }else{
                     Log.w(TAG, "cannot close GATT connection with server with missing required services");
                 }
