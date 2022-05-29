@@ -31,7 +31,7 @@ public class GPSHandling {
     public static final long UPDATE_INTERVAL = 1000; //in milliseconds
     public static final long FASTEST_INTERVAL = 500;
     public static final long MAX_WAIT_TIME = 500;
-    public static final float UPDATE_AFTER_METERS = 1; //in meters
+    public static final float UPDATE_AFTER_METERS = 3; //in meters
 
     public GPSHandling (Context ctx){
 

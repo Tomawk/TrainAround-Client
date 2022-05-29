@@ -60,7 +60,7 @@ public class SensorActivity extends Activity {
                 // Get extra data included in the Intent
                 String message = intent.getStringExtra("Activity");
                 if(message.equals("STILL") && !currentActivity.equals("STILL")){
-                    sendStillnessAlert();
+                    stepCounterHandling.setStepsAtStill();
                     disableGPSLocations();
                 } else{
                     enableGPSLocations();
@@ -306,11 +306,11 @@ public class SensorActivity extends Activity {
         Log.d(TAG, "Stopping sensors monitoring activity ...");
         finish();
     }
-
+/*
     private void sendStillnessAlert() {
         Intent intent = new Intent("StillnessAlert");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
+    }*/
 
     @Override
     public void onDestroy(){
@@ -319,7 +319,7 @@ public class SensorActivity extends Activity {
         stopHeartRate();
         disableGPSLocations();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
-        stepCounterHandling.onDestroy();
+        //stepCounterHandling.onDestroy();
         super.onDestroy();
     }
 }

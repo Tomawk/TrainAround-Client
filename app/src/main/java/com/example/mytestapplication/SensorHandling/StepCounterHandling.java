@@ -31,22 +31,22 @@ public class StepCounterHandling implements SensorEventListener {
     private float initialSteps = 0;
     private float stepsAtm = 0;
     private float stepsAtStill = 0;
-
+/*
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             stepsAtStill = stepsAtm;
         }
     };
-
+*/
     public StepCounterHandling(SensorManager sm, Context ctx){
         context = ctx;
         mSensorManager = sm;
         mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-
+/*
         LocalBroadcastManager.getInstance(context).registerReceiver(
                 mMessageReceiver,new IntentFilter("StillnessAlert"));
-
+*/
 
     }
 
@@ -65,7 +65,7 @@ public class StepCounterHandling implements SensorEventListener {
     }
 
     public void onDestroy(){
-        LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver);
+       // LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver);
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -102,6 +102,10 @@ public class StepCounterHandling implements SensorEventListener {
         TextView textView_steps = (TextView) ((Activity)context).findViewById(R.id.textView_steps);
         textView_steps.setText("Step Counter: " + new_steps);
         textView_steps.setTextColor(Color.GREEN);
+    }
+
+    public void setStepsAtStill(){
+        stepsAtStill = stepsAtm;
     }
 
     private void sendResumingAlert() {
