@@ -239,6 +239,12 @@ public class GATTClientService extends Service {
             Log.v(TAG, "received a call to onServiceChanged: should re-discover the services with gatt.discoverServices()");
             gatt.discoverServices();
         }
+
+        @Override
+        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            super.onCharacteristicWrite(gatt, characteristic, status);
+            writeRequestDispatched(characteristic);
+        }
     };
 
     @Override
@@ -591,9 +597,41 @@ public class GATTClientService extends Service {
 
         characteristic.setValue(value);
 
-        @SuppressLint("MissingPermission")
-        boolean status = bluetoothGatt.writeCharacteristic(characteristic);
-        return status;
+        addPendingWriteCharacteristicRequest(characteristic);
+
+        return true;
+    }
+
+    private ArrayList<BluetoothGattCharacteristic> pendingWrites = new ArrayList<>();
+
+    private void addPendingWriteCharacteristicRequest(BluetoothGattCharacteristic writeCharacteristic){
+        boolean anyPreviousPending = anyPendingWriteCharacteristicRequest();
+        pendingWrites.add(writeCharacteristic);
+        if( ! anyPreviousPending ){
+            dispatchWriteCharacteristic();
+        }
+    }
+
+    private boolean anyPendingWriteCharacteristicRequest(){
+        return !( pendingWrites.isEmpty() );
+    }
+
+    private void writeRequestDispatched(BluetoothGattCharacteristic writeReq){
+        pendingWrites.remove(writeReq);
+        //Log.v(TAG, "dispatched write req on " + writeReq.getUuid());
+        if( anyPendingWriteCharacteristicRequest()){
+            dispatchWriteCharacteristic();
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void dispatchWriteCharacteristic(){
+        if(pendingWrites.isEmpty()){
+            return;
+        }
+        BluetoothGattCharacteristic characteristic = pendingWrites.get(0);
+        //Log.v(TAG, "going to send write req on " + characteristic.getUuid());
+        bluetoothGatt.writeCharacteristic(characteristic);
     }
 
     @Nullable

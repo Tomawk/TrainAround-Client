@@ -2,6 +2,7 @@ package com.example.mytestapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -12,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 public class Transactions {
+    private static final String TAG = Transactions.class.getSimpleName();
 
     public static final String TRANSACTION_ACTION = "write-transaction";
     public static final String TRANSACTION_TYPES = "transaction-type";
@@ -26,6 +28,9 @@ public class Transactions {
         PACE,
         DISTANCE
     }
+
+    private static int writeSentOnHR = 0;
+    private static int writeSentOnSpeed = 0;
 
     public static void writeAthleteName(Context context, String athleteName){
         broadcastMessage(context, TRANSACTION_TYPE.NAME, athleteName.getBytes(StandardCharsets.UTF_8));
@@ -76,6 +81,12 @@ public class Transactions {
         intent.putExtra(TRANSACTION_TYPES, transaction_type);
         intent.putExtra(DATA, data);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        if(transaction_type == TRANSACTION_TYPE.HEART_RATE){
+            writeSentOnHR++;
+        }else if(transaction_type == TRANSACTION_TYPE.SPEED){
+            writeSentOnSpeed++;
+        }
+        Log.v(TAG, "sending msg for " + transaction_type.name() + " | total write sent for HR: " + writeSentOnHR + " | for Speed: " + writeSentOnSpeed);
     }
 
 }

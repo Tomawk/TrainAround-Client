@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -125,6 +126,9 @@ public class SensorActivity extends Activity {
 
     public void onResume(){
         super.onResume();
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // Devices with a display should not go to sleep
+
         if (!currentActivity.equals("STILL")){
             //enableStepCounter();
             enableGPSLocations();
