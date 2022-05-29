@@ -53,19 +53,23 @@ public class SensorActivity extends Activity {
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
-            String message = intent.getStringExtra("Activity");
-            currentActivity = message;
-            if(message.equals("STILL")){
-                disableGPSLocations();
-                stopStepCounter();
-            } else{
+
+            if(intent.getAction().equals("ResumeGPS")){
                 enableGPSLocations();
-                enableStepCounter();
+            }else{
+                // Get extra data included in the Intent
+                String message = intent.getStringExtra("Activity");
+                currentActivity = message;
+                if(message.equals("STILL")){
+                    sendStillnessAlert();
+                    disableGPSLocations();
+                } else{
+                    enableGPSLocations();
+                }
+                TextView textView_activity = (TextView) findViewById(R.id.textView_activity);
+                textView_activity.setText("Activity Recognized: " + message);
+                textView_activity.setTextColor(Color.GREEN);
             }
-            TextView textView_activity = (TextView) findViewById(R.id.textView_activity);
-            textView_activity.setText("Activity Recognized: " + message);
-            textView_activity.setTextColor(Color.GREEN);
         }
     };
 
@@ -93,8 +97,12 @@ public class SensorActivity extends Activity {
         ActivityRecognition.getClient(this).requestActivityUpdates(0, pendingIntent);
         activityUpdating = true;
 
+        IntentFilter broadcastFilter = new IntentFilter();
+        broadcastFilter.addAction("ActivityRecognized");
+        broadcastFilter.addAction("ResumeGPS");
+
         LocalBroadcastManager.getInstance(this).registerReceiver(
-                mMessageReceiver, new IntentFilter("ActivityRecognized"));
+                mMessageReceiver,broadcastFilter);
 
         //Sensor classes instantiations
         stepCounterHandling = new StepCounterHandling(sensorManager, this);
@@ -115,7 +123,7 @@ public class SensorActivity extends Activity {
     public void onResume(){
         super.onResume();
         if (!currentActivity.equals("STILL")){
-            enableStepCounter();
+            //enableStepCounter();
             enableGPSLocations();
         }
         enableHeartRate();
@@ -296,6 +304,11 @@ public class SensorActivity extends Activity {
     public void stopSensorActivity(){
         Log.d(TAG, "Stopping sensors monitoring activity ...");
         finish();
+    }
+
+    private void sendStillnessAlert() {
+        Intent intent = new Intent("StillnessAlert");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     @Override

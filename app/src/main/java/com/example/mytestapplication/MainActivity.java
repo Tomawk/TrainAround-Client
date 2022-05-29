@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     // set this field to true if you want to test the app in the emulator
-    private static final boolean TESTING_ENV_WITHOUT_BL_ACCESS = false;
+    private static final boolean TESTING_ENV_WITHOUT_BL_ACCESS = true;
 
     private boolean user_set = false;
     private String athleteName;

@@ -1,7 +1,10 @@
 package com.example.mytestapplication.SensorHandling;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -10,8 +13,11 @@ import android.hardware.SensorManager;
 import android.util.Log;
 import android.widget.TextView;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.example.mytestapplication.MainActivity;
 import com.example.mytestapplication.R;
+import com.example.mytestapplication.SensorActivity;
 import com.example.mytestapplication.Transactions;
 
 import java.util.List;
@@ -23,11 +29,25 @@ public class StepCounterHandling implements SensorEventListener {
     private final Sensor mStepCounter;
     private final Context context;
     private float initialSteps = 0;
+    private float stepsAtm = 0;
+    private float stepsAtStill = 0;
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            stepsAtStill = stepsAtm;
+        }
+    };
 
     public StepCounterHandling(SensorManager sm, Context ctx){
         context = ctx;
         mSensorManager = sm;
         mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+
+        LocalBroadcastManager.getInstance(context).registerReceiver(
+                mMessageReceiver,new IntentFilter("StillnessAlert"));
+
+
     }
 
     /*
@@ -53,6 +73,11 @@ public class StepCounterHandling implements SensorEventListener {
             printStepValues(0);
         } else {
             float new_steps = event.values[0] - initialSteps;
+            stepsAtm = new_steps;
+            if(new_steps >= (stepsAtStill+50)){
+                //GPS Sensor should be resumed
+                sendResumingAlert();
+            }
             printStepValues(new_steps);
             Transactions.writeSteps(context.getApplicationContext(), new_steps);
         }
@@ -73,5 +98,10 @@ public class StepCounterHandling implements SensorEventListener {
         TextView textView_steps = (TextView) ((Activity)context).findViewById(R.id.textView_steps);
         textView_steps.setText("Step Counter: " + new_steps);
         textView_steps.setTextColor(Color.GREEN);
+    }
+
+    private void sendResumingAlert() {
+        Intent intent = new Intent("ResumeGPS");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }
