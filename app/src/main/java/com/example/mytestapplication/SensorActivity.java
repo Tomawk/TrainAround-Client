@@ -59,13 +59,13 @@ public class SensorActivity extends Activity {
             }else{
                 // Get extra data included in the Intent
                 String message = intent.getStringExtra("Activity");
-                currentActivity = message;
-                if(message.equals("STILL")){
+                if(message.equals("STILL") && !currentActivity.equals("STILL")){
                     sendStillnessAlert();
                     disableGPSLocations();
                 } else{
                     enableGPSLocations();
                 }
+                currentActivity = message;
                 TextView textView_activity = (TextView) findViewById(R.id.textView_activity);
                 textView_activity.setText("Activity Recognized: " + message);
                 textView_activity.setTextColor(Color.GREEN);
