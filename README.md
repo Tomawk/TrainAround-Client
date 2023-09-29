@@ -25,4 +25,5 @@ Our focus was also on the network to connect the smartwatches to the Coach's Sma
 
 # Additional Information
 This part is the client-side application developed for the smartwatches, if you want to check the code of the server-side app follow this [link](http://example.com "Title").  
-You can also find more information in this [Power Point Presentation](http://example.com "Title").
+You can also find more information in this [Power Point Presentation](https://github.com/Tomawk/TrainingApp_Project/blob/master/TrainAround.pptx).
+
