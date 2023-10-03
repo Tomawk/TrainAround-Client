@@ -24,6 +24,6 @@ Our focus was also on the network to connect the smartwatches to the Coach's Sma
 ![smartphone_ui](https://github.com/Tomawk/TrainingApp_Project/blob/master/img/user_interface.png)
 
 # Additional Information
-This part is the client-side application developed for the smartwatches, if you want to check the code of the server-side app follow this [link](http://example.com "Title").  
+This part is the client-side application developed for the smartwatches, if you want to check the code of the server-side app follow this [link](https://github.com/pieruccim/TrainAround-Server).  
 You can also find more information in this [Power Point Presentation](https://github.com/Tomawk/TrainingApp_Project/blob/master/TrainAround.pptx).
 
