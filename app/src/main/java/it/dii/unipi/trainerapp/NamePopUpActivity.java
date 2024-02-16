@@ -1,4 +1,4 @@
-package com.example.mytestapplication;
+package it.dii.unipi.trainerapp;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.mytestapplication.Others.Preferences;
+import it.dii.unipi.trainerapp.Others.Preferences;
 
 public class NamePopUpActivity extends Activity {
 

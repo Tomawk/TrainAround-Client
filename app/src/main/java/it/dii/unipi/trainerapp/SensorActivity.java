@@ -1,4 +1,4 @@
-package com.example.mytestapplication;
+package it.dii.unipi.trainerapp;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -11,24 +11,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.hardware.SensorManager;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.mytestapplication.SensorHandling.GPSHandling;
-import com.example.mytestapplication.SensorHandling.HeartRateHandling;
-import com.example.mytestapplication.SensorHandling.SensorUtility;
-import com.example.mytestapplication.SensorHandling.StepCounterHandling;
+import it.dii.unipi.trainerapp.SensorHandling.GPSHandling;
+import it.dii.unipi.trainerapp.SensorHandling.HeartRateHandling;
+import it.dii.unipi.trainerapp.SensorHandling.SensorUtility;
+import it.dii.unipi.trainerapp.SensorHandling.StepCounterHandling;
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.material.tabs.TabLayout;
 
 import java.util.Locale;
 

@@ -1,4 +1,4 @@
-package com.example.mytestapplication.GATTclient;
+package it.dii.unipi.trainerapp.GATTclient;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -33,7 +33,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.example.mytestapplication.Transactions;
+import it.dii.unipi.trainerapp.Transactions;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

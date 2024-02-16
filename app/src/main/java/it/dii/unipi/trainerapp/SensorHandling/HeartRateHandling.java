@@ -1,4 +1,4 @@
-package com.example.mytestapplication.SensorHandling;
+package it.dii.unipi.trainerapp.SensorHandling;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,11 +10,8 @@ import android.hardware.SensorManager;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.example.mytestapplication.MainActivity;
-import com.example.mytestapplication.R;
-import com.example.mytestapplication.Transactions;
-
-import java.util.List;
+import it.dii.unipi.trainerapp.R;
+import it.dii.unipi.trainerapp.Transactions;
 
 public class HeartRateHandling implements SensorEventListener {
 

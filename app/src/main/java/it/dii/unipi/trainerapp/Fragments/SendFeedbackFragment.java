@@ -1,4 +1,4 @@
-package com.example.mytestapplication.Fragments;
+package it.dii.unipi.trainerapp.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,8 +7,8 @@ import android.widget.Toast;
 
 import androidx.preference.PreferenceFragmentCompat;
 
-import com.example.mytestapplication.MainActivity;
-import com.example.mytestapplication.Others.Preferences;
+import it.dii.unipi.trainerapp.MainActivity;
+import it.dii.unipi.trainerapp.Others.Preferences;
 
 public class SendFeedbackFragment extends PreferenceFragmentCompat {
 

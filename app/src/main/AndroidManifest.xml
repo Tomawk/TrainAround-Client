@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.mytestapplication">
+    package="it.dii.unipi.trainerapp">
 
     <uses-feature
         android:name="android.hardware.bluetooth"
@@ -28,26 +28,26 @@
     <uses-feature android:name="android.hardware.type.watch"  />
 
     <application
-        android:name=".AthleteSideApplication"
+        android:name="it.dii.unipi.trainerapp.AthleteSideApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
-        <service android:name=".GATTclient.GATTClientService"
+        <service android:name="it.dii.unipi.trainerapp.GATTclient.GATTClientService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="true"/>
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
         <activity
-            android:name=".SettingsActivity"
+            android:name="it.dii.unipi.trainerapp.SettingsActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             />
         <activity
-            android:name=".NamePopUpActivity"
+            android:name="it.dii.unipi.trainerapp.NamePopUpActivity"
             android:exported="false" />
         <activity
-            android:name=".SensorActivity"
+            android:name="it.dii.unipi.trainerapp.SensorActivity"
             android:exported="false" />
 
         <uses-library
@@ -62,7 +62,7 @@
             android:value="true" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="it.dii.unipi.trainerapp.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
@@ -73,7 +73,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".ActivityRecognizedService" />
+        <service android:name="it.dii.unipi.trainerapp.ActivityRecognizedService" />
     </application>
 
 </manifest>

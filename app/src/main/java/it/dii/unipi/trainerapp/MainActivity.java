@@ -1,4 +1,4 @@
-package com.example.mytestapplication;
+package it.dii.unipi.trainerapp;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -22,9 +22,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.example.mytestapplication.Others.Preferences;
-import com.example.mytestapplication.GATTclient.GATTClientService;
-import com.example.mytestapplication.SensorHandling.SensorUtility;
+import it.dii.unipi.trainerapp.Others.Preferences;
+import it.dii.unipi.trainerapp.GATTclient.GATTClientService;
+import it.dii.unipi.trainerapp.SensorHandling.SensorUtility;
 
 public class MainActivity extends AppCompatActivity {
 

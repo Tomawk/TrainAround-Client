@@ -1,4 +1,4 @@
-package com.example.mytestapplication.Others;
+package it.dii.unipi.trainerapp.Others;
 
 import android.content.Context;
 import android.util.Log;

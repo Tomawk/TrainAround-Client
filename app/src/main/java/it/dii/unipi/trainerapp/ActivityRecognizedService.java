@@ -1,19 +1,10 @@
-package com.example.mytestapplication;
+package it.dii.unipi.trainerapp;
 
-import android.app.Activity;
 import android.app.IntentService;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-import android.os.Handler;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.ActivityRecognitionResult;

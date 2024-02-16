@@ -1,4 +1,4 @@
-package com.example.mytestapplication.SensorHandling;
+package it.dii.unipi.trainerapp.SensorHandling;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,9 +8,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.example.mytestapplication.MainActivity;
-import com.example.mytestapplication.R;
-import com.example.mytestapplication.Transactions;
+import it.dii.unipi.trainerapp.R;
+import it.dii.unipi.trainerapp.Transactions;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;

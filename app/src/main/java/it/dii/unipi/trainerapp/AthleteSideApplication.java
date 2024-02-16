@@ -1,4 +1,4 @@
-package com.example.mytestapplication;
+package it.dii.unipi.trainerapp;
 
 import android.app.Application;
 import android.bluetooth.BluetoothDevice;

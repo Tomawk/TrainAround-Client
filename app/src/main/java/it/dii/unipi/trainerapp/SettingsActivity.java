@@ -1,10 +1,10 @@
-package com.example.mytestapplication;
+package it.dii.unipi.trainerapp;
 
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
 
-import com.example.mytestapplication.Fragments.SettingsFragment;
+import it.dii.unipi.trainerapp.Fragments.SettingsFragment;
 
 public class SettingsActivity extends FragmentActivity {
 

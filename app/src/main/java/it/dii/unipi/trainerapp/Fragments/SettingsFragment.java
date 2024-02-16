@@ -1,10 +1,10 @@
-package com.example.mytestapplication.Fragments;
+package it.dii.unipi.trainerapp.Fragments;
 
 import android.os.Bundle;
 
 import androidx.preference.PreferenceFragmentCompat;
 
-import com.example.mytestapplication.R;
+import it.dii.unipi.trainerapp.R;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     @Override

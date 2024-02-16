@@ -1,10 +1,8 @@
-package com.example.mytestapplication.SensorHandling;
+package it.dii.unipi.trainerapp.SensorHandling;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -15,12 +13,8 @@ import android.widget.TextView;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.example.mytestapplication.MainActivity;
-import com.example.mytestapplication.R;
-import com.example.mytestapplication.SensorActivity;
-import com.example.mytestapplication.Transactions;
-
-import java.util.List;
+import it.dii.unipi.trainerapp.R;
+import it.dii.unipi.trainerapp.Transactions;
 
 public class StepCounterHandling implements SensorEventListener {
     private static final String TAG = "StepcounterHandling";

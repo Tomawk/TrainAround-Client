@@ -1,4 +1,4 @@
-package com.example.mytestapplication.SensorHandling;
+package it.dii.unipi.trainerapp.SensorHandling;
 
 import android.Manifest;
 import android.content.Context;
@@ -9,13 +9,8 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import com.example.mytestapplication.MainActivity;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public final class SensorUtility {

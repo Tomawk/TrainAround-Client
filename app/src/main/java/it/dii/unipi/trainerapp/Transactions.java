@@ -1,12 +1,10 @@
-package com.example.mytestapplication;
+package it.dii.unipi.trainerapp;
 
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import com.example.mytestapplication.GATTclient.GATTClientService;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;

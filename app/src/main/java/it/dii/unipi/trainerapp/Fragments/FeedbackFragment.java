@@ -1,12 +1,10 @@
-package com.example.mytestapplication.Fragments;
+package it.dii.unipi.trainerapp.Fragments;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceScreen;
 
-import com.example.mytestapplication.R;
+import it.dii.unipi.trainerapp.R;
 
 public class FeedbackFragment extends PreferenceFragmentCompat {
     @Override

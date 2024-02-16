@@ -16,5 +16,5 @@
     <Preference
         android:title="Send Feedback"
         android:key="feedback_btn"
-        android:fragment="com.example.mytestapplication.Fragments.SendFeedbackFragment"/>
+        android:fragment="it.dii.unipi.trainerapp.Fragments.SendFeedbackFragment"/>
 </PreferenceScreen>
