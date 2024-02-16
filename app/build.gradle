@@ -9,8 +9,8 @@ android {
         applicationId "it.dii.unipi.trainerapp"
         minSdk 23
         targetSdk 32
-        versionCode 1001
-        versionName "1.0WearOS"
+        versionCode 1002
+        versionName "1.0.5(WearOS)"
 
     }
 
