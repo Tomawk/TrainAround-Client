@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Log.v(TAG, "start_scanning btn pressed, prompting the GATTClientService to start another scan");
+
                     bluetoothService.scanLeDevice();
                     // disable the scan_btn while scan is in execution
                     start_scanning_btn.setEnabled(false);

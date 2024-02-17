@@ -77,6 +77,8 @@ public class GATTClientService extends Service {
     private Looper serviceLooper;
     private ServiceHandler serviceHandler;
 
+    //private static boolean initializedCorrectly = false;
+
     // Handler that receives messages from the thread
     private final class ServiceHandler extends Handler {
         public ServiceHandler(Looper looper) {
@@ -86,9 +88,11 @@ public class GATTClientService extends Service {
         public void handleMessage(Message msg) {
             // we insert here the functionalities executed by the thread
             if( initialize() == true) {
+                //initializedCorrectly = true;
                 scanLeDevice();
             }else{
                 Log.w(TAG, "could not initialize GATTClient");
+                //stopSelf();
             }
             Log.d(TAG, "handleMessage on thread: " + Process.myTid());
         }
@@ -276,6 +280,15 @@ public class GATTClientService extends Service {
         if(bluetoothManager == null){
             Log.e(TAG, "initialize: unable to obtain a bluetoothManager");
             return false;
+        }else{
+            Log.d(TAG, "Initialize: obtained bluetoothManager");
+        }
+        bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+        if(bluetoothLeScanner == null){
+            Log.e(TAG, "initialize: unable to obtain a bluetoothLeScanner");
+            return false;
+        }else{
+            Log.d(TAG, "Initialize: obtained bluetoothLeScanner");
         }
         return true;
     }
@@ -313,6 +326,12 @@ public class GATTClientService extends Service {
             return;
         }
         bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+        if(bluetoothLeScanner == null){
+            Log.e(TAG, "Cannot start scanLeDevice since there is no bluetoothLeScanner");
+            return;
+        }
+
+
 
         /*if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Bluetooth scan permission not granted");
