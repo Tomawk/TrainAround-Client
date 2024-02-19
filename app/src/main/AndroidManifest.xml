@@ -27,12 +27,17 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!--  -->
     <uses-feature android:name="android.hardware.type.watch"  />
 
+    <!-- inside application tag place the following attributes for retro-compatibility with old hardware:
+            android:hardwareAccelerated="false"
+            android:largeHeap="true"
+    -->
     <application
         android:name="it.dii.unipi.trainerapp.AthleteSideApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:largeHeap="true"
         android:theme="@android:style/Theme.DeviceDefault">
         <service android:name="it.dii.unipi.trainerapp.GATTclient.GATTClientService"
             android:permission="android.permission.BIND_JOB_SERVICE"
